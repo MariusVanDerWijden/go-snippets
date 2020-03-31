@@ -39,6 +39,7 @@ func TestEvent(t *testing.T) {
 		t.Log(iter.Event.Out2)
 		t.Log(iter.Event.Raw)
 		t.Log(iter.Next())
-		t.Error()
+		t.Error("Successful if it hits this error")
 	}
+	t.Error("Unsuccessful")
 }
