@@ -28,15 +28,16 @@ var (
 )
 
 // EventerABI is the input ABI used to generate the binding from.
-const EventerABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"int8\",\"name\":\"out1\",\"type\":\"int8\"},{\"indexed\":true,\"internalType\":\"int8\",\"name\":\"out2\",\"type\":\"int8\"}],\"name\":\"TestInt8\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"getEvent\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const EventerABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"AnonEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"int8\",\"name\":\"out1\",\"type\":\"int8\"},{\"indexed\":true,\"internalType\":\"int8\",\"name\":\"out2\",\"type\":\"int8\"}],\"name\":\"TestInt8\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"anonEvent\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"getEvent\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // EventerFuncSigs maps the 4-byte function signature to its string representation.
 var EventerFuncSigs = map[string]string{
+	"529c2b1f": "anonEvent()",
 	"bf819c20": "getEvent()",
 }
 
 // EventerBin is the compiled bytecode used for deploying new contracts.
-var EventerBin = "0x6080604052348015600f57600080fd5b50609d8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063bf819c2014602d575b600080fd5b60336035565b005b60405160021990600119907f8f50d21be7587a4814a9d4c10b7c8d1eea6389adbd44cb59ddaba790fd2ecbbd90600090a356fea265627a7a72315820deefbda2d76c10e3f80bc569b4fc3f4987926ce3925758b0f946f77cf7de6fda64736f6c63430005100032"
+var EventerBin = "0x608060405234801561001057600080fd5b5060e98061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c8063529c2b1f146037578063bf819c2014603f575b600080fd5b603d6045565b005b603d6081565b6040805133808252602082015281517f5aabb901501aff3228b2a4010c287e9d9fe99f2a3d5036dd6cdd2829b567f64f929181900390910190a1565b60405160021990600119907f8f50d21be7587a4814a9d4c10b7c8d1eea6389adbd44cb59ddaba790fd2ecbbd90600090a356fea265627a7a723158208dae9c5bc82acccdd667635af0283252066f15af4ffaa09266918207bacb8df764736f6c63430005100032"
 
 // DeployEventer deploys a new Ethereum contract, binding an instance of Eventer to it.
 func DeployEventer(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Eventer, error) {
@@ -194,6 +195,27 @@ func (_Eventer *EventerTransactorRaw) Transact(opts *bind.TransactOpts, method s
 	return _Eventer.Contract.contract.Transact(opts, method, params...)
 }
 
+// AnonEvent is a paid mutator transaction binding the contract method 0x529c2b1f.
+//
+// Solidity: function anonEvent() returns()
+func (_Eventer *EventerTransactor) AnonEvent(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Eventer.contract.Transact(opts, "anonEvent")
+}
+
+// AnonEvent is a paid mutator transaction binding the contract method 0x529c2b1f.
+//
+// Solidity: function anonEvent() returns()
+func (_Eventer *EventerSession) AnonEvent() (*types.Transaction, error) {
+	return _Eventer.Contract.AnonEvent(&_Eventer.TransactOpts)
+}
+
+// AnonEvent is a paid mutator transaction binding the contract method 0x529c2b1f.
+//
+// Solidity: function anonEvent() returns()
+func (_Eventer *EventerTransactorSession) AnonEvent() (*types.Transaction, error) {
+	return _Eventer.Contract.AnonEvent(&_Eventer.TransactOpts)
+}
+
 // GetEvent is a paid mutator transaction binding the contract method 0xbf819c20.
 //
 // Solidity: function getEvent() returns()
@@ -213,6 +235,140 @@ func (_Eventer *EventerSession) GetEvent() (*types.Transaction, error) {
 // Solidity: function getEvent() returns()
 func (_Eventer *EventerTransactorSession) GetEvent() (*types.Transaction, error) {
 	return _Eventer.Contract.GetEvent(&_Eventer.TransactOpts)
+}
+
+// EventerAnonEventIterator is returned from FilterAnonEvent and is used to iterate over the raw logs and unpacked data for AnonEvent events raised by the Eventer contract.
+type EventerAnonEventIterator struct {
+	Event *EventerAnonEvent // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *EventerAnonEventIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(EventerAnonEvent)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(EventerAnonEvent)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *EventerAnonEventIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *EventerAnonEventIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// EventerAnonEvent represents a AnonEvent event raised by the Eventer contract.
+type EventerAnonEvent struct {
+	Arg0 common.Address
+	Arg1 common.Address
+	Raw  types.Log // Blockchain specific contextual infos
+}
+
+// FilterAnonEvent is a free log retrieval operation binding the contract event 0x5aabb901501aff3228b2a4010c287e9d9fe99f2a3d5036dd6cdd2829b567f64f.
+//
+// Solidity: event AnonEvent(address , address )
+func (_Eventer *EventerFilterer) FilterAnonEvent(opts *bind.FilterOpts) (*EventerAnonEventIterator, error) {
+
+	logs, sub, err := _Eventer.contract.FilterLogs(opts, "AnonEvent")
+	if err != nil {
+		return nil, err
+	}
+	return &EventerAnonEventIterator{contract: _Eventer.contract, event: "AnonEvent", logs: logs, sub: sub}, nil
+}
+
+// WatchAnonEvent is a free log subscription operation binding the contract event 0x5aabb901501aff3228b2a4010c287e9d9fe99f2a3d5036dd6cdd2829b567f64f.
+//
+// Solidity: event AnonEvent(address , address )
+func (_Eventer *EventerFilterer) WatchAnonEvent(opts *bind.WatchOpts, sink chan<- *EventerAnonEvent) (event.Subscription, error) {
+
+	logs, sub, err := _Eventer.contract.WatchLogs(opts, "AnonEvent")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(EventerAnonEvent)
+				if err := _Eventer.contract.UnpackLog(event, "AnonEvent", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseAnonEvent is a log parse operation binding the contract event 0x5aabb901501aff3228b2a4010c287e9d9fe99f2a3d5036dd6cdd2829b567f64f.
+//
+// Solidity: event AnonEvent(address , address )
+func (_Eventer *EventerFilterer) ParseAnonEvent(log types.Log) (*EventerAnonEvent, error) {
+	event := new(EventerAnonEvent)
+	if err := _Eventer.contract.UnpackLog(event, "AnonEvent", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }
 
 // EventerTestInt8Iterator is returned from FilterTestInt8 and is used to iterate over the raw logs and unpacked data for TestInt8 events raised by the Eventer contract.
