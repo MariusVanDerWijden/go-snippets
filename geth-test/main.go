@@ -33,5 +33,5 @@ func getSimBackend() (*backends.SimulatedBackend, *ecdsa.PrivateKey) {
 		faucetAddr:                       {Balance: new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(9))},
 	}
 	alloc := core.GenesisAlloc(addr)
-	return backends.NewSimulatedBackend(alloc, 8000000), sk
+	return backends.NewSimulatedBackend(alloc, 80000000), sk
 }

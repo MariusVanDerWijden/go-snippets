@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNegativeEvent(t *testing.T) {
@@ -77,4 +78,20 @@ func TestAnonymousEvent(t *testing.T) {
 	}
 	t.Error(iter.Error())
 	t.Error("Unsuccessful")
+}
+
+func TestFail(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	backend, sk := getSimBackend()
+	transactor := bind.NewKeyedTransactor(sk)
+	_, _, eventer, err := DeployEventer(transactor, backend)
+	assert.NoError(t, err)
+
+	tx, err := eventer.Fail(transactor)
+	require.NoError(t, err)
+	backend.Commit()
+	receipt, err := bind.WaitMined(ctx, backend, tx)
+	assert.NoError(t, err)
+	assert.True(t, receipt.Status != types.ReceiptStatusFailed)
 }

@@ -27,17 +27,426 @@ var (
 	_ = event.NewSubscription
 )
 
+// ArrayABI is the input ABI used to generate the binding from.
+const ArrayABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"get_array\",\"outputs\":[{\"internalType\":\"uint8[2][4]\",\"name\":\"\",\"type\":\"uint8[2][4]\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}]"
+
+// ArrayFuncSigs maps the 4-byte function signature to its string representation.
+var ArrayFuncSigs = map[string]string{
+	"c75d70ed": "get_array()",
+}
+
+// ArrayBin is the compiled bytecode used for deploying new contracts.
+var ArrayBin = "0x608060405234801561001057600080fd5b50610169806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063c75d70ed14610030575b600080fd5b610038610092565b6040516000826004835b818410156100825760208402830151604080838360005b83811015610071578181015183820152602001610059565b505050509050019260010192610042565b9250505091505060405180910390f35b61009a6100e9565b6100a26100e9565b805160009052602080820180516001905260408301805160029052606084018051600390528451600490850152915160059084015251600690830152516007910152919050565b60405180608001604052806004905b610100610116565b8152602001906001900390816100f85790505090565b6040518060400160405280600290602082028038833950919291505056fea265627a7a72315820a5f6089d26aec9cf0d7e240bf1a6bc7c17f9af39497c7e431f5cf76abfd8b89464736f6c63430005100032"
+
+// DeployArray deploys a new Ethereum contract, binding an instance of Array to it.
+func DeployArray(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Array, error) {
+	parsed, err := abi.JSON(strings.NewReader(ArrayABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ArrayBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Array{ArrayCaller: ArrayCaller{contract: contract}, ArrayTransactor: ArrayTransactor{contract: contract}, ArrayFilterer: ArrayFilterer{contract: contract}}, nil
+}
+
+// Array is an auto generated Go binding around an Ethereum contract.
+type Array struct {
+	ArrayCaller     // Read-only binding to the contract
+	ArrayTransactor // Write-only binding to the contract
+	ArrayFilterer   // Log filterer for contract events
+}
+
+// ArrayCaller is an auto generated read-only Go binding around an Ethereum contract.
+type ArrayCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// ArrayTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type ArrayTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// ArrayFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type ArrayFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// ArraySession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type ArraySession struct {
+	Contract     *Array            // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// ArrayCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type ArrayCallerSession struct {
+	Contract *ArrayCaller  // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts // Call options to use throughout this session
+}
+
+// ArrayTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type ArrayTransactorSession struct {
+	Contract     *ArrayTransactor  // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// ArrayRaw is an auto generated low-level Go binding around an Ethereum contract.
+type ArrayRaw struct {
+	Contract *Array // Generic contract binding to access the raw methods on
+}
+
+// ArrayCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type ArrayCallerRaw struct {
+	Contract *ArrayCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// ArrayTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type ArrayTransactorRaw struct {
+	Contract *ArrayTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewArray creates a new instance of Array, bound to a specific deployed contract.
+func NewArray(address common.Address, backend bind.ContractBackend) (*Array, error) {
+	contract, err := bindArray(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &Array{ArrayCaller: ArrayCaller{contract: contract}, ArrayTransactor: ArrayTransactor{contract: contract}, ArrayFilterer: ArrayFilterer{contract: contract}}, nil
+}
+
+// NewArrayCaller creates a new read-only instance of Array, bound to a specific deployed contract.
+func NewArrayCaller(address common.Address, caller bind.ContractCaller) (*ArrayCaller, error) {
+	contract, err := bindArray(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &ArrayCaller{contract: contract}, nil
+}
+
+// NewArrayTransactor creates a new write-only instance of Array, bound to a specific deployed contract.
+func NewArrayTransactor(address common.Address, transactor bind.ContractTransactor) (*ArrayTransactor, error) {
+	contract, err := bindArray(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &ArrayTransactor{contract: contract}, nil
+}
+
+// NewArrayFilterer creates a new log filterer instance of Array, bound to a specific deployed contract.
+func NewArrayFilterer(address common.Address, filterer bind.ContractFilterer) (*ArrayFilterer, error) {
+	contract, err := bindArray(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &ArrayFilterer{contract: contract}, nil
+}
+
+// bindArray binds a generic wrapper to an already deployed contract.
+func bindArray(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(ArrayABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Array *ArrayRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Array.Contract.ArrayCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Array *ArrayRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Array.Contract.ArrayTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Array *ArrayRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Array.Contract.ArrayTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Array *ArrayCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Array.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Array *ArrayTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Array.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Array *ArrayTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Array.Contract.contract.Transact(opts, method, params...)
+}
+
+// GetArray is a free data retrieval call binding the contract method 0xc75d70ed.
+//
+// Solidity: function get_array() constant returns(uint8[2][4])
+func (_Array *ArrayCaller) GetArray(opts *bind.CallOpts) ([4][2]uint8, error) {
+	var (
+		ret0 = new([4][2]uint8)
+	)
+	out := ret0
+	err := _Array.contract.Call(opts, out, "get_array")
+	return *ret0, err
+}
+
+// GetArray is a free data retrieval call binding the contract method 0xc75d70ed.
+//
+// Solidity: function get_array() constant returns(uint8[2][4])
+func (_Array *ArraySession) GetArray() ([4][2]uint8, error) {
+	return _Array.Contract.GetArray(&_Array.CallOpts)
+}
+
+// GetArray is a free data retrieval call binding the contract method 0xc75d70ed.
+//
+// Solidity: function get_array() constant returns(uint8[2][4])
+func (_Array *ArrayCallerSession) GetArray() ([4][2]uint8, error) {
+	return _Array.Contract.GetArray(&_Array.CallOpts)
+}
+
+// BigBoardABI is the input ABI used to generate the binding from.
+const BigBoardABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"fill1\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"get_board_state\",\"outputs\":[{\"internalType\":\"uint8[9][10][3]\",\"name\":\"\",\"type\":\"uint8[9][10][3]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+
+// BigBoardFuncSigs maps the 4-byte function signature to its string representation.
+var BigBoardFuncSigs = map[string]string{
+	"0350e928": "fill1()",
+	"810851a8": "get_board_state()",
+}
+
+// BigBoardBin is the compiled bytecode used for deploying new contracts.
+var BigBoardBin = "0x608060405234801561001057600080fd5b506102c7806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80630350e9281461003b578063810851a814610045575b600080fd5b6100436100cb565b005b61004d61015e565b6040516000826003835b818410156100bb5782846020020151600a6000925b818410156100ad576020840283015161012080838360005b8381101561009c578181015183820152602001610084565b50505050905001926001019261006c565b925050509260010192610057565b9250505091505060405180910390f35b60005b600381101561015b5760005b600a8110156101525760005b60098110156101495780820183026000846003811061010157fe5b600a020183600a811061011057fe5b01826009811061011c57fe5b602091828204019190066101000a81548160ff021916908360ff16021790555080806001019150506100e6565b506001016100da565b506001016100ce565b50565b610166610218565b60408051606081019091526000600381835b8282101561020f57604080516101408101909152600a8084028601906000835b828210156101fc57604080516101208101918290529085840190600990826000855b825461010083900a900460ff168152602060019283018181049485019490930390920291018084116101ba579050505050505081526020019060010190610198565b5050505081526020019060010190610178565b50505050905090565b60405180606001604052806003905b61022f610245565b8152602001906001900390816102275790505090565b604051806101400160405280600a905b61025d610273565b8152602001906001900390816102555790505090565b604051806101200160405280600990602082028038833950919291505056fea265627a7a723158201d4c708bf9b423355b61717660161c479b2af0d4a57fa4216c5e03990fa3f25364736f6c63430005100032"
+
+// DeployBigBoard deploys a new Ethereum contract, binding an instance of BigBoard to it.
+func DeployBigBoard(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *BigBoard, error) {
+	parsed, err := abi.JSON(strings.NewReader(BigBoardABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(BigBoardBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &BigBoard{BigBoardCaller: BigBoardCaller{contract: contract}, BigBoardTransactor: BigBoardTransactor{contract: contract}, BigBoardFilterer: BigBoardFilterer{contract: contract}}, nil
+}
+
+// BigBoard is an auto generated Go binding around an Ethereum contract.
+type BigBoard struct {
+	BigBoardCaller     // Read-only binding to the contract
+	BigBoardTransactor // Write-only binding to the contract
+	BigBoardFilterer   // Log filterer for contract events
+}
+
+// BigBoardCaller is an auto generated read-only Go binding around an Ethereum contract.
+type BigBoardCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// BigBoardTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type BigBoardTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// BigBoardFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type BigBoardFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// BigBoardSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type BigBoardSession struct {
+	Contract     *BigBoard         // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// BigBoardCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type BigBoardCallerSession struct {
+	Contract *BigBoardCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts   // Call options to use throughout this session
+}
+
+// BigBoardTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type BigBoardTransactorSession struct {
+	Contract     *BigBoardTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+}
+
+// BigBoardRaw is an auto generated low-level Go binding around an Ethereum contract.
+type BigBoardRaw struct {
+	Contract *BigBoard // Generic contract binding to access the raw methods on
+}
+
+// BigBoardCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type BigBoardCallerRaw struct {
+	Contract *BigBoardCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// BigBoardTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type BigBoardTransactorRaw struct {
+	Contract *BigBoardTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewBigBoard creates a new instance of BigBoard, bound to a specific deployed contract.
+func NewBigBoard(address common.Address, backend bind.ContractBackend) (*BigBoard, error) {
+	contract, err := bindBigBoard(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &BigBoard{BigBoardCaller: BigBoardCaller{contract: contract}, BigBoardTransactor: BigBoardTransactor{contract: contract}, BigBoardFilterer: BigBoardFilterer{contract: contract}}, nil
+}
+
+// NewBigBoardCaller creates a new read-only instance of BigBoard, bound to a specific deployed contract.
+func NewBigBoardCaller(address common.Address, caller bind.ContractCaller) (*BigBoardCaller, error) {
+	contract, err := bindBigBoard(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &BigBoardCaller{contract: contract}, nil
+}
+
+// NewBigBoardTransactor creates a new write-only instance of BigBoard, bound to a specific deployed contract.
+func NewBigBoardTransactor(address common.Address, transactor bind.ContractTransactor) (*BigBoardTransactor, error) {
+	contract, err := bindBigBoard(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &BigBoardTransactor{contract: contract}, nil
+}
+
+// NewBigBoardFilterer creates a new log filterer instance of BigBoard, bound to a specific deployed contract.
+func NewBigBoardFilterer(address common.Address, filterer bind.ContractFilterer) (*BigBoardFilterer, error) {
+	contract, err := bindBigBoard(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &BigBoardFilterer{contract: contract}, nil
+}
+
+// bindBigBoard binds a generic wrapper to an already deployed contract.
+func bindBigBoard(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(BigBoardABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_BigBoard *BigBoardRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _BigBoard.Contract.BigBoardCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_BigBoard *BigBoardRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _BigBoard.Contract.BigBoardTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_BigBoard *BigBoardRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _BigBoard.Contract.BigBoardTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_BigBoard *BigBoardCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _BigBoard.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_BigBoard *BigBoardTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _BigBoard.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_BigBoard *BigBoardTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _BigBoard.Contract.contract.Transact(opts, method, params...)
+}
+
+// GetBoardState is a free data retrieval call binding the contract method 0x810851a8.
+//
+// Solidity: function get_board_state() constant returns(uint8[9][10][3])
+func (_BigBoard *BigBoardCaller) GetBoardState(opts *bind.CallOpts) ([3][10][9]uint8, error) {
+	var (
+		ret0 = new([3][10][9]uint8)
+	)
+	out := ret0
+	err := _BigBoard.contract.Call(opts, out, "get_board_state")
+	return *ret0, err
+}
+
+// GetBoardState is a free data retrieval call binding the contract method 0x810851a8.
+//
+// Solidity: function get_board_state() constant returns(uint8[9][10][3])
+func (_BigBoard *BigBoardSession) GetBoardState() ([3][10][9]uint8, error) {
+	return _BigBoard.Contract.GetBoardState(&_BigBoard.CallOpts)
+}
+
+// GetBoardState is a free data retrieval call binding the contract method 0x810851a8.
+//
+// Solidity: function get_board_state() constant returns(uint8[9][10][3])
+func (_BigBoard *BigBoardCallerSession) GetBoardState() ([3][10][9]uint8, error) {
+	return _BigBoard.Contract.GetBoardState(&_BigBoard.CallOpts)
+}
+
+// Fill1 is a paid mutator transaction binding the contract method 0x0350e928.
+//
+// Solidity: function fill1() returns()
+func (_BigBoard *BigBoardTransactor) Fill1(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _BigBoard.contract.Transact(opts, "fill1")
+}
+
+// Fill1 is a paid mutator transaction binding the contract method 0x0350e928.
+//
+// Solidity: function fill1() returns()
+func (_BigBoard *BigBoardSession) Fill1() (*types.Transaction, error) {
+	return _BigBoard.Contract.Fill1(&_BigBoard.TransactOpts)
+}
+
+// Fill1 is a paid mutator transaction binding the contract method 0x0350e928.
+//
+// Solidity: function fill1() returns()
+func (_BigBoard *BigBoardTransactorSession) Fill1() (*types.Transaction, error) {
+	return _BigBoard.Contract.Fill1(&_BigBoard.TransactOpts)
+}
+
 // EventerABI is the input ABI used to generate the binding from.
-const EventerABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"AnonEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"int8\",\"name\":\"out1\",\"type\":\"int8\"},{\"indexed\":true,\"internalType\":\"int8\",\"name\":\"out2\",\"type\":\"int8\"}],\"name\":\"TestInt8\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"anonEvent\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"getEvent\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const EventerABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"AnonEvent\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"int8\",\"name\":\"out1\",\"type\":\"int8\"},{\"indexed\":true,\"internalType\":\"int8\",\"name\":\"out2\",\"type\":\"int8\"}],\"name\":\"TestInt8\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"anonEvent\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"fail\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"getEvent\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // EventerFuncSigs maps the 4-byte function signature to its string representation.
 var EventerFuncSigs = map[string]string{
 	"529c2b1f": "anonEvent()",
+	"a9cc4718": "fail()",
 	"bf819c20": "getEvent()",
 }
 
 // EventerBin is the compiled bytecode used for deploying new contracts.
-var EventerBin = "0x608060405234801561001057600080fd5b5060e98061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c8063529c2b1f146037578063bf819c2014603f575b600080fd5b603d6045565b005b603d6081565b6040805133808252602082015281517f5aabb901501aff3228b2a4010c287e9d9fe99f2a3d5036dd6cdd2829b567f64f929181900390910190a1565b60405160021990600119907f8f50d21be7587a4814a9d4c10b7c8d1eea6389adbd44cb59ddaba790fd2ecbbd90600090a356fea265627a7a723158208dae9c5bc82acccdd667635af0283252066f15af4ffaa09266918207bacb8df764736f6c63430005100032"
+var EventerBin = "0x608060405234801561001057600080fd5b50610140806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063529c2b1f14610046578063a9cc471814610050578063bf819c2014610058575b600080fd5b61004e610060565b005b61004e61009c565b61004e6100d8565b6040805133808252602082015281517f5aabb901501aff3228b2a4010c287e9d9fe99f2a3d5036dd6cdd2829b567f64f929181900390910190a1565b6040805162461bcd60e51b815260206004820152600c60248201526b6572726f7220737472696e6760a01b604482015290519081900360640190fd5b60405160021990600119907f8f50d21be7587a4814a9d4c10b7c8d1eea6389adbd44cb59ddaba790fd2ecbbd90600090a356fea265627a7a72315820c1c87d9ac8cff2f385a85f0d119ec138fdc1ae4555e5eb7190d045b93677d19664736f6c63430005100032"
 
 // DeployEventer deploys a new Ethereum contract, binding an instance of Eventer to it.
 func DeployEventer(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Eventer, error) {
@@ -214,6 +623,27 @@ func (_Eventer *EventerSession) AnonEvent() (*types.Transaction, error) {
 // Solidity: function anonEvent() returns()
 func (_Eventer *EventerTransactorSession) AnonEvent() (*types.Transaction, error) {
 	return _Eventer.Contract.AnonEvent(&_Eventer.TransactOpts)
+}
+
+// Fail is a paid mutator transaction binding the contract method 0xa9cc4718.
+//
+// Solidity: function fail() returns()
+func (_Eventer *EventerTransactor) Fail(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Eventer.contract.Transact(opts, "fail")
+}
+
+// Fail is a paid mutator transaction binding the contract method 0xa9cc4718.
+//
+// Solidity: function fail() returns()
+func (_Eventer *EventerSession) Fail() (*types.Transaction, error) {
+	return _Eventer.Contract.Fail(&_Eventer.TransactOpts)
+}
+
+// Fail is a paid mutator transaction binding the contract method 0xa9cc4718.
+//
+// Solidity: function fail() returns()
+func (_Eventer *EventerTransactorSession) Fail() (*types.Transaction, error) {
+	return _Eventer.Contract.Fail(&_Eventer.TransactOpts)
 }
 
 // GetEvent is a paid mutator transaction binding the contract method 0xbf819c20.
