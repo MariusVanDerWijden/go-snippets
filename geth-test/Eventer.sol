@@ -1,4 +1,4 @@
-pragma solidity >=0.4.22 <0.7.0;
+pragma solidity >=0.6.0 <0.7.0;
 
 
 contract Eventer {
@@ -53,5 +53,16 @@ contract Array {
         board[2][1] = 6;
         board[3][1] = 7;
         return board;
+    }
+}
+
+contract ReceiveFallback {
+    event Fallback(address sender);
+    event Receive(address sender);
+    fallback() external {
+        emit Fallback(msg.sender);
+    }
+    receive() external payable {
+        emit Receive(msg.sender);
     }
 }
