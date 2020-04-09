@@ -1,6 +1,7 @@
 package geth
 
 import (
+	"fmt"
 	"math/big"
 
 	"crypto/ecdsa"
@@ -9,6 +10,12 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
+)
+
+var (
+	SK   = "0xcdfbe6f7602f67a97602e3e9fc24cde1cdffa88acd47745c0b84c5ff55891e1b"
+	ADDR = "0xb02A2EdA1b317FBd16760128836B0Ac59B560e9D"
 )
 
 func main() {
@@ -34,4 +41,25 @@ func getSimBackend() (*backends.SimulatedBackend, *ecdsa.PrivateKey) {
 	}
 	alloc := core.GenesisAlloc(addr)
 	return backends.NewSimulatedBackend(alloc, 80000000), sk
+}
+
+func genKey() ([]byte, []byte) {
+	sk, err := crypto.GenerateKey()
+	if err != nil {
+		panic(err)
+	}
+	return crypto.FromECDSA(sk), []byte(crypto.PubkeyToAddress(sk.PublicKey).Hex())
+}
+
+func getRealBackend() (*ethclient.Client, *ecdsa.PrivateKey) {
+	// eth.sendTransaction({from:personal.listAccounts[0], to:"0xb02A2EdA1b317FBd16760128836B0Ac59B560e9D", value: "100000000000000"})
+	sk := crypto.ToECDSAUnsafe(common.FromHex(SK))
+	if crypto.PubkeyToAddress(sk.PublicKey).Hex() != ADDR {
+		panic(fmt.Sprintf("wrong address want %s got %s", crypto.PubkeyToAddress(sk.PublicKey).Hex(), ADDR))
+	}
+	cl, err := ethclient.Dial("/tmp/geth.ipc")
+	if err != nil {
+		panic(err)
+	}
+	return cl, sk
 }

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -90,8 +91,12 @@ func TestFail(t *testing.T) {
 
 	tx, err := eventer.Fail(transactor)
 	require.NoError(t, err)
-	backend.Commit()
 	receipt, err := bind.WaitMined(ctx, backend, tx)
 	assert.NoError(t, err)
 	assert.True(t, receipt.Status != types.ReceiptStatusFailed)
+}
+
+func TestKey(t *testing.T) {
+	sk, pk := genKey()
+	assert.Equal(t, common.ToHex(sk), common.ToHex(pk))
 }
