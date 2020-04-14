@@ -1,4 +1,5 @@
 pragma solidity >=0.6.0 <0.7.0;
+pragma experimental ABIEncoderV2;
 
 
 contract Eventer {
@@ -65,4 +66,15 @@ contract ReceiveFallback {
     receive() external payable {
         emit Receive(msg.sender);
     }
+}
+
+struct T { uint x; uint y; }
+
+contract TupleTest {
+    struct S { uint a; uint[] b; T[] c; }
+    event evF(S, T, uint);
+    function f(S memory s, T memory t, uint u) public {
+        emit evF(s,t,u);
+    }
+    function g() public pure returns (S memory, T memory, uint) {}
 }
