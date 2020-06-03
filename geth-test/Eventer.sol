@@ -1,7 +1,6 @@
 pragma solidity >=0.6.0 <0.7.0;
 pragma experimental ABIEncoderV2;
 
-
 contract Eventer {
    
     event TestInt8(int8 indexed out1, int8 indexed out2);
@@ -68,7 +67,7 @@ contract ReceiveFallback {
     }
 }
 
-struct T { uint x; uint y; }
+
 
 contract TupleTest {
     struct S { uint a; uint[] b; T[] c; }
@@ -77,4 +76,50 @@ contract TupleTest {
         emit evF(s,t,u);
     }
     function g() public pure returns (S memory, T memory, uint) {}
+}
+
+
+struct T { uint x; uint y; }
+contract TupleTest2 {
+    
+    struct S { uint a; uint[] b; T[] c; }
+    struct A {uint a; uint[]b;}
+    event evF(S, T, uint);
+    
+    function a(T memory t) public view returns (T memory) {
+        return t;
+    }
+    function b(T[] memory t) public view returns (T[] memory) {
+        return t;
+    }
+    
+    function method(A memory a, uint b) view public {}
+    
+    function f(S memory s, T memory t, uint u) view public {
+        //emit evF(s,t,u);
+    }
+    
+    function g() public view returns (S memory, T memory, uint) {
+        T memory t = T(1, 2);
+        uint[] memory b = new uint[](3);
+        b[0] = 1;
+        b[1] = 2;
+        b[2] = 3;
+        T[] memory ts = new T[](2);
+        ts[0] = t;
+        ts[1] = t;
+        S memory a = S(1, b, ts);
+       // emit evF(a, t, 3);
+        return (a, t, 3);
+    }
+}
+
+
+contract VoidTest {
+     function method(uint a) view public {}
+}
+
+contract Overloader {
+    struct F { uint _f; uint __f; uint f; }
+    function f(F memory f) public {}
 }
