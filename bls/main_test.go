@@ -10,6 +10,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -71,4 +72,31 @@ func TestFallback(t *testing.T) {
 
 	}
 
+}
+
+func TestMutatorLive(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	backend, sk := getRealBackend()
+	contract, err := NewCallBLS(common.HexToAddress(Contract), backend)
+	assert.NoError(t, err)
+	transactor := bind.NewKeyedTransactor(sk)
+	config := MutationConfig{
+		bin:          true,
+		corpus:       make([][]byte, 0),
+		MaxInputSize: 4096,
+	}
+	input := NewG1Point([]byte{1, 2, 3}, config)
+	input2 := NewG1Point([]byte{1, 2, 3}, config)
+	bls := new(vm.Bls12381G1Add)
+	_, err = bls.Run(append(input, input2...))
+	if err != nil {
+		panic(err)
+	}
+	tx, err := contract.CallPrec(transactor, big.NewInt(10), append(input, input2...))
+	if err == nil {
+		_, err = bind.WaitMined(ctx, backend, tx)
+		t.Log("Successful")
+	}
+	panic(err)
 }
