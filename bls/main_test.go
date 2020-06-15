@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
 	"math/big"
 	"math/rand"
 	"testing"
@@ -10,10 +9,10 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/stretchr/testify/assert"
 )
 
+/*
 func TestFallback(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -30,40 +29,37 @@ func TestFallback(t *testing.T) {
 		assert.NoError(t, err)
 
 		for i := int64(10); i < 18; i++ {
-
-			var in []byte
-			k := rand.Int31n(100)
-			switch i {
-			case 10, 11:
-				in = make([]byte, 256)
-			case 12:
-				in = make([]byte, 160*k)
-			case 13, 14:
-				in = make([]byte, 512)
-			case 15, 16:
-				in = make([]byte, 288*k)
-			case 17:
-				in = make([]byte, 384*k)
-			}
-			copy(in, input)
-			/*
-				if i == 10 || i == 11 || i == 13 || i == 14 {
-					name := rand.Int63()
-					half := make([]byte, len(in)/2)
-					copy(half, in)
-					ioutil.WriteFile(fmt.Sprintf("corpus/%d", name), half, 0644)
-					name = rand.Int63()
-					double := make([]byte, len(in)*2)
-					copy(double, in)
-					copy(double[len(in):], in)
-					ioutil.WriteFile(fmt.Sprintf("corpus/%d", name), double, 0644)
-					t.Log("Writing doubles/halfes")
-				}*/
 			transactor := bind.NewKeyedTransactor(sk)
 			tx, err := contract.CallPrec(transactor, big.NewInt(i), input)
 			if err == nil {
 				_, err = bind.WaitMined(ctx, backend, tx)
 				t.Log("Successful")
+				t.Log(i)
+				t.Log(input)
+			}
+		}
+	}
+
+}
+*/
+
+/*
+func TestFallbackOffline(t *testing.T) {
+	dir, err := ioutil.ReadDir("corpus")
+	if err != nil {
+		t.Error(err)
+	}
+	for _, info := range dir {
+		input, err := ioutil.ReadFile("corpus/" + info.Name())
+		assert.NoError(t, err)
+
+		for i := int64(10); i < 18; i++ {
+			bls := new(vm.Bls12381G1Add)
+			_, err = bls.Run(input)
+			if err == nil {
+				t.Log("Successful")
+				t.Log(i)
+				t.Log(common.ToHex(input))
 			}
 			//t.Log(i, len(in), in, common.Bytes2Hex(in), err)
 			//time.Sleep(3 * time.Second)
@@ -71,14 +67,17 @@ func TestFallback(t *testing.T) {
 		//time.Sleep(30 * time.Second)
 
 	}
-
+	panic("aadsf")
 }
-
-func TestMutatorLive(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+*/
+func TestMulG2Live(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
 	defer cancel()
 	backend, sk := getRealBackend()
-	contract, err := NewCallBLS(common.HexToAddress(Contract), backend)
+	auth := bind.NewKeyedTransactor(sk)
+	_, tx, contract, err := DeployEIP2537Caller(auth, backend)
+	assert.NoError(t, err)
+	_, err = bind.WaitDeployed(ctx, backend, tx)
 	assert.NoError(t, err)
 	transactor := bind.NewKeyedTransactor(sk)
 	config := MutationConfig{
@@ -86,17 +85,133 @@ func TestMutatorLive(t *testing.T) {
 		corpus:       make([][]byte, 0),
 		MaxInputSize: 4096,
 	}
-	input := NewG1Point([]byte{1, 2, 3}, config)
-	input2 := NewG1Point([]byte{1, 2, 3}, config)
-	bls := new(vm.Bls12381G1Add)
-	_, err = bls.Run(append(input, input2...))
-	if err != nil {
-		panic(err)
+
+	iv := []byte{1, 2, 3}
+	for i := 0; i < 1000; i++ {
+		for k := 0; k < 100; k++ {
+			input := NewG2Point(iv, config)
+			mul := make([]byte, 32)
+			rand.Read(mul)
+			tx, err = contract.CallWithMutation(transactor, common.BigToAddress(big.NewInt(0x0e)), append(input, mul...))
+			iv = append(input, mul...)
+		}
+		if err == nil {
+			_, err = bind.WaitMined(ctx, backend, tx)
+			t.Logf("Call successful: %d", i)
+			b, err := contract.LastSuccess(nil)
+			assert.NoError(t, err)
+			t.Log(b)
+		}
 	}
-	tx, err := contract.CallPrec(transactor, big.NewInt(10), append(input, input2...))
-	if err == nil {
-		_, err = bind.WaitMined(ctx, backend, tx)
-		t.Log("Successful")
+
+	panic(err)
+}
+
+func TestMulG1Live(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
+	defer cancel()
+	backend, sk := getRealBackend()
+	auth := bind.NewKeyedTransactor(sk)
+	_, tx, contract, err := DeployEIP2537Caller(auth, backend)
+	assert.NoError(t, err)
+	_, err = bind.WaitDeployed(ctx, backend, tx)
+	assert.NoError(t, err)
+	transactor := bind.NewKeyedTransactor(sk)
+	config := MutationConfig{
+		bin:          true,
+		corpus:       make([][]byte, 0),
+		MaxInputSize: 4096,
 	}
+
+	iv := []byte{1, 2, 3}
+	for i := 0; i < 1000; i++ {
+		for k := 0; k < 100; k++ {
+			input := NewG1Point(iv, config)
+			mul := make([]byte, 32)
+			rand.Read(mul)
+			tx, err = contract.CallWithMutation(transactor, common.BigToAddress(big.NewInt(0x0b)), append(input, mul...))
+			iv = append(input, mul...)
+		}
+		if err == nil {
+			_, err = bind.WaitMined(ctx, backend, tx)
+			t.Logf("Call successful: %d", i)
+			b, err := contract.LastSuccess(nil)
+			assert.NoError(t, err)
+			t.Log(b)
+		}
+	}
+
+	panic(err)
+}
+
+func TestAddG2Live(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
+	defer cancel()
+	backend, sk := getRealBackend()
+	auth := bind.NewKeyedTransactor(sk)
+	_, tx, contract, err := DeployEIP2537Caller(auth, backend)
+	assert.NoError(t, err)
+	_, err = bind.WaitDeployed(ctx, backend, tx)
+	assert.NoError(t, err)
+	transactor := bind.NewKeyedTransactor(sk)
+	config := MutationConfig{
+		bin:          true,
+		corpus:       make([][]byte, 0),
+		MaxInputSize: 4096,
+	}
+
+	iv := []byte{1, 2, 3}
+	for i := 0; i < 100; i++ {
+		for k := 0; k < 100; k++ {
+			input := NewG2Point(iv, config)
+			input2 := NewG2Point(iv, config)
+			tx, err = contract.CallWithMutation(transactor, common.BigToAddress(big.NewInt(0x0d)), append(input, input2...))
+			iv = append(input, input2...)
+		}
+		if err == nil {
+			_, err = bind.WaitMined(ctx, backend, tx)
+			t.Log("Call successful")
+			b, err := contract.LastSuccess(nil)
+			assert.NoError(t, err)
+			t.Log(b)
+		}
+	}
+
+	panic(err)
+}
+
+func TestAddLive(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
+	defer cancel()
+	backend, sk := getRealBackend()
+	auth := bind.NewKeyedTransactor(sk)
+	_, tx, contract, err := DeployEIP2537Caller(auth, backend)
+	assert.NoError(t, err)
+	_, err = bind.WaitDeployed(ctx, backend, tx)
+	assert.NoError(t, err)
+	transactor := bind.NewKeyedTransactor(sk)
+	config := MutationConfig{
+		bin:          true,
+		corpus:       make([][]byte, 0),
+		MaxInputSize: 4096,
+	}
+
+	iv := []byte{1, 2, 3}
+	for i := 0; i < 10000; i++ {
+		for k := 0; k < 100; k++ {
+			input := NewG1Point(iv, config)
+			input2 := NewG1Point(iv, config)
+			tx, err = contract.CallWithMutation(transactor, common.BigToAddress(big.NewInt(0x0a)), append(input, input2...))
+			iv = append(input, input2...)
+		}
+		if err == nil {
+			_, err = bind.WaitMined(ctx, backend, tx)
+			t.Log("Call successful")
+			b, err := contract.LastSuccess(nil)
+			assert.NoError(t, err)
+			t.Log(b)
+		}
+	}
+
 	panic(err)
 }

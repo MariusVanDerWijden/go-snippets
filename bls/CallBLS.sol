@@ -38,5 +38,17 @@ contract CallBLS {
         emit Uint(d);
     }
 }
+
+contract EIP2537Caller {
+    bool public last_success = false;
+
+    function call_with_mutation(address _address, bytes memory _data) public returns (bool success, bytes memory out) {
+        last_success = false;
+        (success, out) = _address.staticcall(_data);
+        last_success = success;
+
+        return (success, out);
+    }
+}
 //"0x11","0x000000000000000000000000000000000dbb997ef4970a472bfcf03e959acb90bb13671a3d27c91698975a407856505e93837f46afc965363f21c35a3d194ec0"
 // 0x51eF031Ba1B2128971bd67A3ba5dda9BfF8706c8

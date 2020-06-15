@@ -1,12 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-
-	"github.com/ethereum/go-ethereum/core/vm"
-)
-
+/*
 func TestMutator(t *testing.T) {
 	b := []byte{1, 2, 3}
 	config := MutationConfig{
@@ -37,3 +31,4 @@ func TestMutator(t *testing.T) {
 	}
 	panic("adsf")
 }
+*/
