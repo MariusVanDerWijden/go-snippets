@@ -20,12 +20,18 @@ var (
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
-	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
+
+// OverloaderF is an auto generated low-level Go binding around an user-defined struct.
+type OverloaderF struct {
+	F *big.Int
+	F *big.Int
+	F *big.Int
+}
 
 // T is an auto generated low-level Go binding around an user-defined struct.
 type T struct {
@@ -62,7 +68,7 @@ var ArrayFuncSigs = map[string]string{
 }
 
 // ArrayBin is the compiled bytecode used for deploying new contracts.
-var ArrayBin = "0x608060405234801561001057600080fd5b50610187806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063c75d70ed14610030575b600080fd5b61003861004e565b60405161004591906100f0565b60405180910390f35b6100566100a5565b61005e6100a5565b805160009052602080820180516001905260408301805160029052606084018051600390528451600490850152915160059084015251600690830152516007910152919050565b60405180608001604052806004905b6100bc6100d2565b8152602001906001900390816100b45790505090565b60405180604001604052806002906020820280368337509192915050565b610100810181836000805b6004811015610147578251829085905b600283101561012e57805160ff168252600192909201916020918201910161010b565b50505060409390930192602092909201916001016100fb565b505050509291505056fea2646970667358221220eb78ee80dd41d2866b578c30c179c234d2a69670a640229241ee9b8e0adc4fe564736f6c63430006050033"
+var ArrayBin = "0x608060405234801561001057600080fd5b50610187806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063c75d70ed14610030575b600080fd5b61003861004e565b60405161004591906100f0565b60405180910390f35b6100566100a5565b61005e6100a5565b805160009052602080820180516001905260408301805160029052606084018051600390528451600490850152915160059084015251600690830152516007910152919050565b60405180608001604052806004905b6100bc6100d2565b8152602001906001900390816100b45790505090565b60405180604001604052806002906020820280368337509192915050565b610100810181836000805b6004811015610147578251829085905b600283101561012e57805160ff168252600192909201916020918201910161010b565b50505060409390930192602092909201916001016100fb565b505050509291505056fea264697066735822122067739bdd14f05bd6c5dc0bf903021591cad29b1cd394152b5c653418f83e724c64736f6c63430006050033"
 
 // DeployArray deploys a new Ethereum contract, binding an instance of Array to it.
 func DeployArray(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Array, error) {
@@ -186,7 +192,7 @@ func bindArray(address common.Address, caller bind.ContractCaller, transactor bi
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Array *ArrayRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Array *ArrayRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Array.Contract.ArrayCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -205,7 +211,7 @@ func (_Array *ArrayRaw) Transact(opts *bind.TransactOpts, method string, params 
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Array *ArrayCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Array *ArrayCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Array.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -224,12 +230,14 @@ func (_Array *ArrayTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 //
 // Solidity: function get_array() pure returns(uint8[2][4])
 func (_Array *ArrayCaller) GetArray(opts *bind.CallOpts) ([4][2]uint8, error) {
-	var (
-		ret0 = new([4][2]uint8)
-	)
-	out := ret0
-	err := _Array.contract.Call(opts, out, "get_array")
-	return *ret0, err
+	var out []interface{}
+	err := _Array.contract.Call(opts, &out, "get_array")
+
+	if err != nil {
+		return *new([4][2]uint8), err
+	}
+
+	return bind.ToStruct(out[0], *new([4][2]uint8)).([4][2]uint8), err
 }
 
 // GetArray is a free data retrieval call binding the contract method 0xc75d70ed.
@@ -256,7 +264,7 @@ var BigBoardFuncSigs = map[string]string{
 }
 
 // BigBoardBin is the compiled bytecode used for deploying new contracts.
-var BigBoardBin = "0x608060405234801561001057600080fd5b506102ec806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80630350e9281461003b578063810851a814610045575b600080fd5b610043610063565b005b61004d6100f6565b60405161005a919061022a565b60405180910390f35b60005b60038110156100f35760005b600a8110156100ea5760005b60098110156100e15780820183026000846003811061009957fe5b600a020183600a81106100a857fe5b0182600981106100b457fe5b602091828204019190066101000a81548160ff021916908360ff160217905550808060010191505061007e565b50600101610072565b50600101610066565b50565b6100fe6101b0565b60408051606081019091526000600381835b828210156101a757604080516101408101909152600a8084028601906000835b8282101561019457604080516101208101918290529085840190600990826000855b825461010083900a900460ff16815260206001928301818104948501949093039092029101808411610152579050505050505081526020019060010190610130565b5050505081526020019060010190610110565b50505050905090565b60405180606001604052806003905b6101c76101dd565b8152602001906001900390816101bf5790505090565b604051806101400160405280600a905b6101f561020b565b8152602001906001900390816101ed5790505090565b6040518061012001604052806009906020820280368337509192915050565b6121c08101818360005b60038110156102ad57815160009084905b600a83101561029357805160009083905b600983101561027957805160ff1682526001929092019160209182019101610256565b505050600192909201916101209190910190602001610245565b505050610b40929092019160209190910190600101610234565b5050509291505056fea2646970667358221220c0ed6af899d8d6181b73711da791870901267adaeec62986c98bec62703412de64736f6c63430006050033"
+var BigBoardBin = "0x608060405234801561001057600080fd5b506102ec806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80630350e9281461003b578063810851a814610045575b600080fd5b610043610063565b005b61004d6100f6565b60405161005a919061022a565b60405180910390f35b60005b60038110156100f35760005b600a8110156100ea5760005b60098110156100e15780820183026000846003811061009957fe5b600a020183600a81106100a857fe5b0182600981106100b457fe5b602091828204019190066101000a81548160ff021916908360ff160217905550808060010191505061007e565b50600101610072565b50600101610066565b50565b6100fe6101b0565b60408051606081019091526000600381835b828210156101a757604080516101408101909152600a8084028601906000835b8282101561019457604080516101208101918290529085840190600990826000855b825461010083900a900460ff16815260206001928301818104948501949093039092029101808411610152579050505050505081526020019060010190610130565b5050505081526020019060010190610110565b50505050905090565b60405180606001604052806003905b6101c76101dd565b8152602001906001900390816101bf5790505090565b604051806101400160405280600a905b6101f561020b565b8152602001906001900390816101ed5790505090565b6040518061012001604052806009906020820280368337509192915050565b6121c08101818360005b60038110156102ad57815160009084905b600a83101561029357805160009083905b600983101561027957805160ff1682526001929092019160209182019101610256565b505050600192909201916101209190910190602001610245565b505050610b40929092019160209190910190600101610234565b5050509291505056fea264697066735822122033688fee8bca1ee7660c522b2fef56a2b72e9a9158f86a93ceb7a91955fd91ac64736f6c63430006050033"
 
 // DeployBigBoard deploys a new Ethereum contract, binding an instance of BigBoard to it.
 func DeployBigBoard(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *BigBoard, error) {
@@ -380,7 +388,7 @@ func bindBigBoard(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_BigBoard *BigBoardRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_BigBoard *BigBoardRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _BigBoard.Contract.BigBoardCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -399,7 +407,7 @@ func (_BigBoard *BigBoardRaw) Transact(opts *bind.TransactOpts, method string, p
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_BigBoard *BigBoardCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_BigBoard *BigBoardCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _BigBoard.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -418,12 +426,14 @@ func (_BigBoard *BigBoardTransactorRaw) Transact(opts *bind.TransactOpts, method
 //
 // Solidity: function get_board_state() view returns(uint8[9][10][3])
 func (_BigBoard *BigBoardCaller) GetBoardState(opts *bind.CallOpts) ([3][10][9]uint8, error) {
-	var (
-		ret0 = new([3][10][9]uint8)
-	)
-	out := ret0
-	err := _BigBoard.contract.Call(opts, out, "get_board_state")
-	return *ret0, err
+	var out []interface{}
+	err := _BigBoard.contract.Call(opts, &out, "get_board_state")
+
+	if err != nil {
+		return *new([3][10][9]uint8), err
+	}
+
+	return bind.ToStruct(out[0], *new([3][10][9]uint8)).([3][10][9]uint8), err
 }
 
 // GetBoardState is a free data retrieval call binding the contract method 0x810851a8.
@@ -472,7 +482,7 @@ var EventerFuncSigs = map[string]string{
 }
 
 // EventerBin is the compiled bytecode used for deploying new contracts.
-var EventerBin = "0x608060405234801561001057600080fd5b50610165806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063529c2b1f14610046578063a9cc471814610050578063bf819c2014610058575b600080fd5b61004e610060565b005b61004e61009b565b61004e6100bc565b7f5aabb901501aff3228b2a4010c287e9d9fe99f2a3d5036dd6cdd2829b567f64f33336040516100919291906100ef565b60405180910390a1565b60405162461bcd60e51b81526004016100b390610109565b60405180910390fd5b60405160021990600119907f8f50d21be7587a4814a9d4c10b7c8d1eea6389adbd44cb59ddaba790fd2ecbbd90600090a3565b6001600160a01b0392831681529116602082015260400190565b6020808252600c908201526b6572726f7220737472696e6760a01b60408201526060019056fea26469706673582212209771e6d6fc950d73b303172155cc111c16eca2a5a1f7aa008710126f504e614664736f6c63430006050033"
+var EventerBin = "0x608060405234801561001057600080fd5b50610165806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063529c2b1f14610046578063a9cc471814610050578063bf819c2014610058575b600080fd5b61004e610060565b005b61004e61009b565b61004e6100bc565b7f5aabb901501aff3228b2a4010c287e9d9fe99f2a3d5036dd6cdd2829b567f64f33336040516100919291906100ef565b60405180910390a1565b60405162461bcd60e51b81526004016100b390610109565b60405180910390fd5b60405160021990600119907f8f50d21be7587a4814a9d4c10b7c8d1eea6389adbd44cb59ddaba790fd2ecbbd90600090a3565b6001600160a01b0392831681529116602082015260400190565b6020808252600c908201526b6572726f7220737472696e6760a01b60408201526060019056fea2646970667358221220970cca912e070f568e124ffbcdc5a5a6f24bf3d034bdc7a6d15cdcff8bf6ac0264736f6c63430006050033"
 
 // DeployEventer deploys a new Ethereum contract, binding an instance of Eventer to it.
 func DeployEventer(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Eventer, error) {
@@ -596,7 +606,7 @@ func bindEventer(address common.Address, caller bind.ContractCaller, transactor 
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Eventer *EventerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Eventer *EventerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Eventer.Contract.EventerCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -615,7 +625,7 @@ func (_Eventer *EventerRaw) Transact(opts *bind.TransactOpts, method string, par
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Eventer *EventerCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Eventer *EventerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Eventer.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -979,11 +989,199 @@ func (_Eventer *EventerFilterer) ParseTestInt8(log types.Log) (*EventerTestInt8,
 	return event, nil
 }
 
+// OverloaderABI is the input ABI used to generate the binding from.
+const OverloaderABI = "[{\"inputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"_f\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"__f\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"f\",\"type\":\"uint256\"}],\"internalType\":\"structOverloader.F\",\"name\":\"f\",\"type\":\"tuple\"}],\"name\":\"f\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+
+// OverloaderFuncSigs maps the 4-byte function signature to its string representation.
+var OverloaderFuncSigs = map[string]string{
+	"a55a6cbc": "f((uint256,uint256,uint256))",
+}
+
+// OverloaderBin is the compiled bytecode used for deploying new contracts.
+var OverloaderBin = "0x6080604052348015600f57600080fd5b5060cc8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063a55a6cbc14602d575b600080fd5b603c60383660046041565b603e565b005b50565b6000606082840312156051578081fd5b6040516060810181811067ffffffffffffffff82111715606f578283fd5b8060405250823581526020830135602082015260408301356040820152809150509291505056fea26469706673582212203649f78eef8a03a1cc216041479fe94b206df46e003fccd37d0be6a0fddde46964736f6c63430006050033"
+
+// DeployOverloader deploys a new Ethereum contract, binding an instance of Overloader to it.
+func DeployOverloader(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Overloader, error) {
+	parsed, err := abi.JSON(strings.NewReader(OverloaderABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(OverloaderBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Overloader{OverloaderCaller: OverloaderCaller{contract: contract}, OverloaderTransactor: OverloaderTransactor{contract: contract}, OverloaderFilterer: OverloaderFilterer{contract: contract}}, nil
+}
+
+// Overloader is an auto generated Go binding around an Ethereum contract.
+type Overloader struct {
+	OverloaderCaller     // Read-only binding to the contract
+	OverloaderTransactor // Write-only binding to the contract
+	OverloaderFilterer   // Log filterer for contract events
+}
+
+// OverloaderCaller is an auto generated read-only Go binding around an Ethereum contract.
+type OverloaderCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OverloaderTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type OverloaderTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OverloaderFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type OverloaderFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OverloaderSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type OverloaderSession struct {
+	Contract     *Overloader       // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// OverloaderCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type OverloaderCallerSession struct {
+	Contract *OverloaderCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts     // Call options to use throughout this session
+}
+
+// OverloaderTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type OverloaderTransactorSession struct {
+	Contract     *OverloaderTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts     // Transaction auth options to use throughout this session
+}
+
+// OverloaderRaw is an auto generated low-level Go binding around an Ethereum contract.
+type OverloaderRaw struct {
+	Contract *Overloader // Generic contract binding to access the raw methods on
+}
+
+// OverloaderCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type OverloaderCallerRaw struct {
+	Contract *OverloaderCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// OverloaderTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type OverloaderTransactorRaw struct {
+	Contract *OverloaderTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewOverloader creates a new instance of Overloader, bound to a specific deployed contract.
+func NewOverloader(address common.Address, backend bind.ContractBackend) (*Overloader, error) {
+	contract, err := bindOverloader(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &Overloader{OverloaderCaller: OverloaderCaller{contract: contract}, OverloaderTransactor: OverloaderTransactor{contract: contract}, OverloaderFilterer: OverloaderFilterer{contract: contract}}, nil
+}
+
+// NewOverloaderCaller creates a new read-only instance of Overloader, bound to a specific deployed contract.
+func NewOverloaderCaller(address common.Address, caller bind.ContractCaller) (*OverloaderCaller, error) {
+	contract, err := bindOverloader(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &OverloaderCaller{contract: contract}, nil
+}
+
+// NewOverloaderTransactor creates a new write-only instance of Overloader, bound to a specific deployed contract.
+func NewOverloaderTransactor(address common.Address, transactor bind.ContractTransactor) (*OverloaderTransactor, error) {
+	contract, err := bindOverloader(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &OverloaderTransactor{contract: contract}, nil
+}
+
+// NewOverloaderFilterer creates a new log filterer instance of Overloader, bound to a specific deployed contract.
+func NewOverloaderFilterer(address common.Address, filterer bind.ContractFilterer) (*OverloaderFilterer, error) {
+	contract, err := bindOverloader(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &OverloaderFilterer{contract: contract}, nil
+}
+
+// bindOverloader binds a generic wrapper to an already deployed contract.
+func bindOverloader(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(OverloaderABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Overloader *OverloaderRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _Overloader.Contract.OverloaderCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Overloader *OverloaderRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Overloader.Contract.OverloaderTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Overloader *OverloaderRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Overloader.Contract.OverloaderTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Overloader *OverloaderCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _Overloader.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Overloader *OverloaderTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Overloader.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Overloader *OverloaderTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Overloader.Contract.contract.Transact(opts, method, params...)
+}
+
+// F is a paid mutator transaction binding the contract method 0xa55a6cbc.
+//
+// Solidity: function f((uint256,uint256,uint256) f) returns()
+func (_Overloader *OverloaderTransactor) F(opts *bind.TransactOpts, f OverloaderF) (*types.Transaction, error) {
+	return _Overloader.contract.Transact(opts, "f", f)
+}
+
+// F is a paid mutator transaction binding the contract method 0xa55a6cbc.
+//
+// Solidity: function f((uint256,uint256,uint256) f) returns()
+func (_Overloader *OverloaderSession) F(f OverloaderF) (*types.Transaction, error) {
+	return _Overloader.Contract.F(&_Overloader.TransactOpts, f)
+}
+
+// F is a paid mutator transaction binding the contract method 0xa55a6cbc.
+//
+// Solidity: function f((uint256,uint256,uint256) f) returns()
+func (_Overloader *OverloaderTransactorSession) F(f OverloaderF) (*types.Transaction, error) {
+	return _Overloader.Contract.F(&_Overloader.TransactOpts, f)
+}
+
 // ReceiveFallbackABI is the input ABI used to generate the binding from.
 const ReceiveFallbackABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"Fallback\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"Receive\",\"type\":\"event\"},{\"stateMutability\":\"nonpayable\",\"type\":\"fallback\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]"
 
 // ReceiveFallbackBin is the compiled bytecode used for deploying new contracts.
-var ReceiveFallbackBin = "0x608060405234801561001057600080fd5b5060bf8061001f6000396000f3fe608060405236603f577f681ad3cb4f20e39dd01bc0e45f0bc6f95ea2de196277ed6ec4f7357e2e2044b833604051603591906075565b60405180910390a1005b348015604a57600080fd5b507fdd0c5778ddb0b0501649417aeffed44057db3d5d530231758c8dc5ef6eeb789433604051603591905b6001600160a01b039190911681526020019056fea2646970667358221220bf92fc33195d5c30319a47c5efed1359f9ad2c225205c41a8b088aa5f154bf0164736f6c63430006050033"
+var ReceiveFallbackBin = "0x608060405234801561001057600080fd5b5060bf8061001f6000396000f3fe608060405236603f577f681ad3cb4f20e39dd01bc0e45f0bc6f95ea2de196277ed6ec4f7357e2e2044b833604051603591906075565b60405180910390a1005b348015604a57600080fd5b507fdd0c5778ddb0b0501649417aeffed44057db3d5d530231758c8dc5ef6eeb789433604051603591905b6001600160a01b039190911681526020019056fea2646970667358221220676cb3e1ca08dcab4754b2f0d577edf5f2d423a3a142c900df555d6c87868e5b64736f6c63430006050033"
 
 // DeployReceiveFallback deploys a new Ethereum contract, binding an instance of ReceiveFallback to it.
 func DeployReceiveFallback(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ReceiveFallback, error) {
@@ -1107,7 +1305,7 @@ func bindReceiveFallback(address common.Address, caller bind.ContractCaller, tra
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ReceiveFallback *ReceiveFallbackRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_ReceiveFallback *ReceiveFallbackRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ReceiveFallback.Contract.ReceiveFallbackCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -1126,7 +1324,7 @@ func (_ReceiveFallback *ReceiveFallbackRaw) Transact(opts *bind.TransactOpts, me
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ReceiveFallback *ReceiveFallbackCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_ReceiveFallback *ReceiveFallbackCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ReceiveFallback.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -1459,7 +1657,7 @@ var TupleTestFuncSigs = map[string]string{
 }
 
 // TupleTestBin is the compiled bytecode used for deploying new contracts.
-var TupleTestBin = "0x608060405234801561001057600080fd5b50610437806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80636f2be7281461003b578063e2179b8e14610050575b600080fd5b61004e6100493660046101ac565b610070565b005b6100586100b0565b604051610067939291906102e3565b60405180910390f35b7f5490ef71cb8b76b3f0788e975052f0f43ba07bc17bae7ea289ee00e50b4d84858383836040516100a3939291906102e3565b60405180910390a1505050565b6100b86100c7565b6100c06100e8565b6000909192565b60405180606001604052806000815260200160608152602001606081525090565b604051806040016040528060008152602001600081525090565b600082601f830112610112578081fd5b8135610125610120826103d8565b6103b1565b818152915060208083019084810160408085028701830188101561014857600080fd5b60005b8581101561016f5761015d898461017b565b8552938301939181019160010161014b565b50505050505092915050565b60006040828403121561018c578081fd5b61019660406103b1565b9050813581526020820135602082015292915050565b6000806000608084860312156101c0578283fd5b833567ffffffffffffffff808211156101d7578485fd5b818601606081890312156101e9578586fd5b6101f360606103b1565b9250803583526020808201358381111561020b578788fd5b8083018a601f82011261021c578889fd5b8035915061022c610120836103d8565b82815283810190828501858502840186018e1015610248578b8cfd5b8b93505b8484101561026a57803583526001939093019291850191850161024c565b5087850152505050604082013583811115610283578788fd5b61028f8a828501610102565b6040860152508396506102a489828a0161017b565b955050505050606084013590509250925092565b60006102c483836102d4565b505060400190565b815260200190565b80518252602090810151910152565b60006080825260e0820185516080840152602080870151606060a086015282815161030e81866103f8565b9284019450859291505b8083101561033d5761032b8286516102cc565b91508385019450600183019250610318565b5060408901519350607f198682030160c0870152809150835161036081836103f8565b8695909350840191505b8085101561038f5761037d8383516102b8565b9250838201915060018501945061036a565b5050809350506103a1818501876102d4565b5050826060830152949350505050565b60405181810167ffffffffffffffff811182821017156103d057600080fd5b604052919050565b600067ffffffffffffffff8211156103ee578081fd5b5060209081020190565b9081526020019056fea2646970667358221220c18f2463d66314abef7474adac1b4cac13445438d9378822f08ca4824d12c0d464736f6c63430006050033"
+var TupleTestBin = "0x608060405234801561001057600080fd5b50610437806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80636f2be7281461003b578063e2179b8e14610050575b600080fd5b61004e6100493660046101ac565b610070565b005b6100586100b0565b604051610067939291906102e3565b60405180910390f35b7f5490ef71cb8b76b3f0788e975052f0f43ba07bc17bae7ea289ee00e50b4d84858383836040516100a3939291906102e3565b60405180910390a1505050565b6100b86100c7565b6100c06100e8565b6000909192565b60405180606001604052806000815260200160608152602001606081525090565b604051806040016040528060008152602001600081525090565b600082601f830112610112578081fd5b8135610125610120826103d8565b6103b1565b818152915060208083019084810160408085028701830188101561014857600080fd5b60005b8581101561016f5761015d898461017b565b8552938301939181019160010161014b565b50505050505092915050565b60006040828403121561018c578081fd5b61019660406103b1565b9050813581526020820135602082015292915050565b6000806000608084860312156101c0578283fd5b833567ffffffffffffffff808211156101d7578485fd5b818601606081890312156101e9578586fd5b6101f360606103b1565b9250803583526020808201358381111561020b578788fd5b8083018a601f82011261021c578889fd5b8035915061022c610120836103d8565b82815283810190828501858502840186018e1015610248578b8cfd5b8b93505b8484101561026a57803583526001939093019291850191850161024c565b5087850152505050604082013583811115610283578788fd5b61028f8a828501610102565b6040860152508396506102a489828a0161017b565b955050505050606084013590509250925092565b60006102c483836102d4565b505060400190565b815260200190565b80518252602090810151910152565b60006080825260e0820185516080840152602080870151606060a086015282815161030e81866103f8565b9284019450859291505b8083101561033d5761032b8286516102cc565b91508385019450600183019250610318565b5060408901519350607f198682030160c0870152809150835161036081836103f8565b8695909350840191505b8085101561038f5761037d8383516102b8565b9250838201915060018501945061036a565b5050809350506103a1818501876102d4565b5050826060830152949350505050565b60405181810167ffffffffffffffff811182821017156103d057600080fd5b604052919050565b600067ffffffffffffffff8211156103ee578081fd5b5060209081020190565b9081526020019056fea26469706673582212201349d7fd95c8c84450b6f5059a89bd20798339d8f0f80ba10c0391ff2a2d9b3e64736f6c63430006050033"
 
 // DeployTupleTest deploys a new Ethereum contract, binding an instance of TupleTest to it.
 func DeployTupleTest(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *TupleTest, error) {
@@ -1583,7 +1781,7 @@ func bindTupleTest(address common.Address, caller bind.ContractCaller, transacto
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TupleTest *TupleTestRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TupleTest *TupleTestRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TupleTest.Contract.TupleTestCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -1602,7 +1800,7 @@ func (_TupleTest *TupleTestRaw) Transact(opts *bind.TransactOpts, method string,
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TupleTest *TupleTestCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TupleTest *TupleTestCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TupleTest.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -1619,53 +1817,49 @@ func (_TupleTest *TupleTestTransactorRaw) Transact(opts *bind.TransactOpts, meth
 
 // G is a free data retrieval call binding the contract method 0xe2179b8e.
 //
-// Solidity: function g() pure returns(TupleTestS, T, uint256)
+// Solidity: function g() pure returns((uint256,uint256[],(uint256,uint256)[]), (uint256,uint256), uint256)
 func (_TupleTest *TupleTestCaller) G(opts *bind.CallOpts) (TupleTestS, T, *big.Int, error) {
-	var (
-		ret0 = new(TupleTestS)
-		ret1 = new(T)
-		ret2 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+	var out []interface{}
+	err := _TupleTest.contract.Call(opts, &out, "g")
+
+	if err != nil {
+		return *new(TupleTestS), *new(T), *new(*big.Int), err
 	}
-	err := _TupleTest.contract.Call(opts, out, "g")
-	return *ret0, *ret1, *ret2, err
+
+	return bind.ToStruct(out[0], *new(TupleTestS)).(TupleTestS), bind.ToStruct(out[1], *new(T)).(T), bind.ToStruct(out[2], *new(*big.Int)).(*big.Int), err
 }
 
 // G is a free data retrieval call binding the contract method 0xe2179b8e.
 //
-// Solidity: function g() pure returns(TupleTestS, T, uint256)
+// Solidity: function g() pure returns((uint256,uint256[],(uint256,uint256)[]), (uint256,uint256), uint256)
 func (_TupleTest *TupleTestSession) G() (TupleTestS, T, *big.Int, error) {
 	return _TupleTest.Contract.G(&_TupleTest.CallOpts)
 }
 
 // G is a free data retrieval call binding the contract method 0xe2179b8e.
 //
-// Solidity: function g() pure returns(TupleTestS, T, uint256)
+// Solidity: function g() pure returns((uint256,uint256[],(uint256,uint256)[]), (uint256,uint256), uint256)
 func (_TupleTest *TupleTestCallerSession) G() (TupleTestS, T, *big.Int, error) {
 	return _TupleTest.Contract.G(&_TupleTest.CallOpts)
 }
 
 // F is a paid mutator transaction binding the contract method 0x6f2be728.
 //
-// Solidity: function f(TupleTestS s, T t, uint256 u) returns()
+// Solidity: function f((uint256,uint256[],(uint256,uint256)[]) s, (uint256,uint256) t, uint256 u) returns()
 func (_TupleTest *TupleTestTransactor) F(opts *bind.TransactOpts, s TupleTestS, t T, u *big.Int) (*types.Transaction, error) {
 	return _TupleTest.contract.Transact(opts, "f", s, t, u)
 }
 
 // F is a paid mutator transaction binding the contract method 0x6f2be728.
 //
-// Solidity: function f(TupleTestS s, T t, uint256 u) returns()
+// Solidity: function f((uint256,uint256[],(uint256,uint256)[]) s, (uint256,uint256) t, uint256 u) returns()
 func (_TupleTest *TupleTestSession) F(s TupleTestS, t T, u *big.Int) (*types.Transaction, error) {
 	return _TupleTest.Contract.F(&_TupleTest.TransactOpts, s, t, u)
 }
 
 // F is a paid mutator transaction binding the contract method 0x6f2be728.
 //
-// Solidity: function f(TupleTestS s, T t, uint256 u) returns()
+// Solidity: function f((uint256,uint256[],(uint256,uint256)[]) s, (uint256,uint256) t, uint256 u) returns()
 func (_TupleTest *TupleTestTransactorSession) F(s TupleTestS, t T, u *big.Int) (*types.Transaction, error) {
 	return _TupleTest.Contract.F(&_TupleTest.TransactOpts, s, t, u)
 }
@@ -1747,7 +1941,7 @@ type TupleTestEvF struct {
 
 // FilterEvF is a free log retrieval operation binding the contract event 0x5490ef71cb8b76b3f0788e975052f0f43ba07bc17bae7ea289ee00e50b4d8485.
 //
-// Solidity: event evF(TupleTestS arg0, T arg1, uint256 arg2)
+// Solidity: event evF((uint256,uint256[],(uint256,uint256)[]) arg0, (uint256,uint256) arg1, uint256 arg2)
 func (_TupleTest *TupleTestFilterer) FilterEvF(opts *bind.FilterOpts) (*TupleTestEvFIterator, error) {
 
 	logs, sub, err := _TupleTest.contract.FilterLogs(opts, "evF")
@@ -1759,7 +1953,7 @@ func (_TupleTest *TupleTestFilterer) FilterEvF(opts *bind.FilterOpts) (*TupleTes
 
 // WatchEvF is a free log subscription operation binding the contract event 0x5490ef71cb8b76b3f0788e975052f0f43ba07bc17bae7ea289ee00e50b4d8485.
 //
-// Solidity: event evF(TupleTestS arg0, T arg1, uint256 arg2)
+// Solidity: event evF((uint256,uint256[],(uint256,uint256)[]) arg0, (uint256,uint256) arg1, uint256 arg2)
 func (_TupleTest *TupleTestFilterer) WatchEvF(opts *bind.WatchOpts, sink chan<- *TupleTestEvF) (event.Subscription, error) {
 
 	logs, sub, err := _TupleTest.contract.WatchLogs(opts, "evF")
@@ -1796,7 +1990,7 @@ func (_TupleTest *TupleTestFilterer) WatchEvF(opts *bind.WatchOpts, sink chan<- 
 
 // ParseEvF is a log parse operation binding the contract event 0x5490ef71cb8b76b3f0788e975052f0f43ba07bc17bae7ea289ee00e50b4d8485.
 //
-// Solidity: event evF(TupleTestS arg0, T arg1, uint256 arg2)
+// Solidity: event evF((uint256,uint256[],(uint256,uint256)[]) arg0, (uint256,uint256) arg1, uint256 arg2)
 func (_TupleTest *TupleTestFilterer) ParseEvF(log types.Log) (*TupleTestEvF, error) {
 	event := new(TupleTestEvF)
 	if err := _TupleTest.contract.UnpackLog(event, "evF", log); err != nil {
@@ -1818,7 +2012,7 @@ var TupleTest2FuncSigs = map[string]string{
 }
 
 // TupleTest2Bin is the compiled bytecode used for deploying new contracts.
-var TupleTest2Bin = "0x608060405234801561001057600080fd5b506106b7806100206000396000f3fe608060405234801561001057600080fd5b50600436106100575760003560e01c80636f2be7281461005c5780637705ed20146100715780639346002a1461009a578063ab41fe7a146100ba578063e2179b8e146100cd575b600080fd5b61006f61006a36600461043f565b6100e4565b005b61008461007f3660046104f5565b6100e9565b604051610091919061061d565b60405180910390f35b6100ad6100a8366004610382565b6100f5565b6040516100919190610572565b61006f6100c83660046103bd565b6100f8565b6100d56100fc565b60405161009193929190610585565b505050565b6100f1610234565b5090565b90565b5050565b61010461024e565b61010c610234565b6000610116610234565b506040805180820182526001815260026020820152815160038082526080820190935290916060919081602001602082028036833701905050905060018160008151811061016057fe5b60200260200101818152505060028160018151811061017b57fe5b60200260200101818152505060038160028151811061019657fe5b60209081029190910101526040805160028082526060828101909352816020015b6101bf610234565b8152602001906001900390816101b757905050905082816000815181106101e257fe5b602002602001018190525082816001815181106101fb57fe5b602002602001018190525061020e61024e565b506040805160608101825260018152602081019390935282015294909350600392509050565b604051806040016040528060008152602001600081525090565b60405180606001604052806000815260200160608152602001606081525090565b600082601f83011261027f578081fd5b813561029261028d82610658565b610631565b81815291506020808301908481016040808502870183018810156102b557600080fd5b60005b858110156102dc576102ca8984610351565b855293830193918101916001016102b8565b50505050505092915050565b600082601f8301126102f8578081fd5b813561030661028d82610658565b81815291506020808301908481018184028601820187101561032757600080fd5b60005b848110156103465781358452928201929082019060010161032a565b505050505092915050565b600060408284031215610362578081fd5b61036c6040610631565b9050813581526020820135602082015292915050565b600060208284031215610393578081fd5b813567ffffffffffffffff8111156103a9578182fd5b6103b58482850161026f565b949350505050565b600080604083850312156103cf578081fd5b823567ffffffffffffffff808211156103e6578283fd5b818501604081880312156103f8578384fd5b6104026040610631565b925080358352602081013582811115610419578485fd5b610425888284016102e8565b602085015250505080925050602083013590509250929050565b600080600060808486031215610453578081fd5b833567ffffffffffffffff8082111561046a578283fd5b8186016060818903121561047c578384fd5b6104866060610631565b92508035835260208101358281111561049d578485fd5b6104a9898284016102e8565b6020850152506040810135828111156104c0578485fd5b6104cc8982840161026f565b6040850152505050809350506104e58560208601610351565b9150606084013590509250925092565b600060408284031215610506578081fd5b6105108383610351565b9392505050565b815260200190565b6000815180845260208085019450808401835b8381101561055857610545878351610563565b6040969096019590820190600101610532565b509495945050505050565b80518252602090810151910152565b600060208252610510602083018461051f565b60006080825260e0820185516080840152602080870151606060a08601528281516105b08186610678565b9284019450859291505b808310156105df576105cd828651610517565b915083850194506001830192506105ba565b506040890151868203607f190160c088015293506105fd818561051f565b9450505061060d81850187610563565b5050826060830152949350505050565b6040810161062b8284610563565b92915050565b60405181810167ffffffffffffffff8111828210171561065057600080fd5b604052919050565b600067ffffffffffffffff82111561066e578081fd5b5060209081020190565b9081526020019056fea264697066735822122036aeb06d2c12394440c72b217de815357ece4bea6f9f8a7c355d5993be41ece464736f6c63430006050033"
+var TupleTest2Bin = "0x608060405234801561001057600080fd5b506106b7806100206000396000f3fe608060405234801561001057600080fd5b50600436106100575760003560e01c80636f2be7281461005c5780637705ed20146100715780639346002a1461009a578063ab41fe7a146100ba578063e2179b8e146100cd575b600080fd5b61006f61006a36600461043f565b6100e4565b005b61008461007f3660046104f5565b6100e9565b604051610091919061061d565b60405180910390f35b6100ad6100a8366004610382565b6100f5565b6040516100919190610572565b61006f6100c83660046103bd565b6100f8565b6100d56100fc565b60405161009193929190610585565b505050565b6100f1610234565b5090565b90565b5050565b61010461024e565b61010c610234565b6000610116610234565b506040805180820182526001815260026020820152815160038082526080820190935290916060919081602001602082028036833701905050905060018160008151811061016057fe5b60200260200101818152505060028160018151811061017b57fe5b60200260200101818152505060038160028151811061019657fe5b60209081029190910101526040805160028082526060828101909352816020015b6101bf610234565b8152602001906001900390816101b757905050905082816000815181106101e257fe5b602002602001018190525082816001815181106101fb57fe5b602002602001018190525061020e61024e565b506040805160608101825260018152602081019390935282015294909350600392509050565b604051806040016040528060008152602001600081525090565b60405180606001604052806000815260200160608152602001606081525090565b600082601f83011261027f578081fd5b813561029261028d82610658565b610631565b81815291506020808301908481016040808502870183018810156102b557600080fd5b60005b858110156102dc576102ca8984610351565b855293830193918101916001016102b8565b50505050505092915050565b600082601f8301126102f8578081fd5b813561030661028d82610658565b81815291506020808301908481018184028601820187101561032757600080fd5b60005b848110156103465781358452928201929082019060010161032a565b505050505092915050565b600060408284031215610362578081fd5b61036c6040610631565b9050813581526020820135602082015292915050565b600060208284031215610393578081fd5b813567ffffffffffffffff8111156103a9578182fd5b6103b58482850161026f565b949350505050565b600080604083850312156103cf578081fd5b823567ffffffffffffffff808211156103e6578283fd5b818501604081880312156103f8578384fd5b6104026040610631565b925080358352602081013582811115610419578485fd5b610425888284016102e8565b602085015250505080925050602083013590509250929050565b600080600060808486031215610453578081fd5b833567ffffffffffffffff8082111561046a578283fd5b8186016060818903121561047c578384fd5b6104866060610631565b92508035835260208101358281111561049d578485fd5b6104a9898284016102e8565b6020850152506040810135828111156104c0578485fd5b6104cc8982840161026f565b6040850152505050809350506104e58560208601610351565b9150606084013590509250925092565b600060408284031215610506578081fd5b6105108383610351565b9392505050565b815260200190565b6000815180845260208085019450808401835b8381101561055857610545878351610563565b6040969096019590820190600101610532565b509495945050505050565b80518252602090810151910152565b600060208252610510602083018461051f565b60006080825260e0820185516080840152602080870151606060a08601528281516105b08186610678565b9284019450859291505b808310156105df576105cd828651610517565b915083850194506001830192506105ba565b506040890151868203607f190160c088015293506105fd818561051f565b9450505061060d81850187610563565b5050826060830152949350505050565b6040810161062b8284610563565b92915050565b60405181810167ffffffffffffffff8111828210171561065057600080fd5b604052919050565b600067ffffffffffffffff82111561066e578081fd5b5060209081020190565b9081526020019056fea26469706673582212209f26de383294fd10970fc21a79adf2d820f97eb7255a8cef588386f5ca8c08f364736f6c63430006050033"
 
 // DeployTupleTest2 deploys a new Ethereum contract, binding an instance of TupleTest2 to it.
 func DeployTupleTest2(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *TupleTest2, error) {
@@ -1942,7 +2136,7 @@ func bindTupleTest2(address common.Address, caller bind.ContractCaller, transact
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TupleTest2 *TupleTest2Raw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TupleTest2 *TupleTest2Raw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TupleTest2.Contract.TupleTest2Caller.contract.Call(opts, result, method, params...)
 }
 
@@ -1961,7 +2155,7 @@ func (_TupleTest2 *TupleTest2Raw) Transact(opts *bind.TransactOpts, method strin
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TupleTest2 *TupleTest2CallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TupleTest2 *TupleTest2CallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TupleTest2.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -1978,132 +2172,140 @@ func (_TupleTest2 *TupleTest2TransactorRaw) Transact(opts *bind.TransactOpts, me
 
 // A is a free data retrieval call binding the contract method 0x7705ed20.
 //
-// Solidity: function a(T t) view returns(T)
+// Solidity: function a((uint256,uint256) t) view returns((uint256,uint256))
 func (_TupleTest2 *TupleTest2Caller) A(opts *bind.CallOpts, t T) (T, error) {
-	var (
-		ret0 = new(T)
-	)
-	out := ret0
-	err := _TupleTest2.contract.Call(opts, out, "a", t)
-	return *ret0, err
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "a", t)
+
+	if err != nil {
+		return *new(T), err
+	}
+
+	return bind.ToStruct(out[0], *new(T)).(T), err
 }
 
 // A is a free data retrieval call binding the contract method 0x7705ed20.
 //
-// Solidity: function a(T t) view returns(T)
+// Solidity: function a((uint256,uint256) t) view returns((uint256,uint256))
 func (_TupleTest2 *TupleTest2Session) A(t T) (T, error) {
 	return _TupleTest2.Contract.A(&_TupleTest2.CallOpts, t)
 }
 
 // A is a free data retrieval call binding the contract method 0x7705ed20.
 //
-// Solidity: function a(T t) view returns(T)
+// Solidity: function a((uint256,uint256) t) view returns((uint256,uint256))
 func (_TupleTest2 *TupleTest2CallerSession) A(t T) (T, error) {
 	return _TupleTest2.Contract.A(&_TupleTest2.CallOpts, t)
 }
 
 // B is a free data retrieval call binding the contract method 0x9346002a.
 //
-// Solidity: function b([]T t) view returns([]T)
+// Solidity: function b((uint256,uint256)[] t) view returns((uint256,uint256)[])
 func (_TupleTest2 *TupleTest2Caller) B(opts *bind.CallOpts, t []T) ([]T, error) {
-	var (
-		ret0 = new([]T)
-	)
-	out := ret0
-	err := _TupleTest2.contract.Call(opts, out, "b", t)
-	return *ret0, err
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "b", t)
+
+	if err != nil {
+		return *new([]T), err
+	}
+
+	return bind.ToStruct(out[0], *new([]T)).([]T), err
 }
 
 // B is a free data retrieval call binding the contract method 0x9346002a.
 //
-// Solidity: function b([]T t) view returns([]T)
+// Solidity: function b((uint256,uint256)[] t) view returns((uint256,uint256)[])
 func (_TupleTest2 *TupleTest2Session) B(t []T) ([]T, error) {
 	return _TupleTest2.Contract.B(&_TupleTest2.CallOpts, t)
 }
 
 // B is a free data retrieval call binding the contract method 0x9346002a.
 //
-// Solidity: function b([]T t) view returns([]T)
+// Solidity: function b((uint256,uint256)[] t) view returns((uint256,uint256)[])
 func (_TupleTest2 *TupleTest2CallerSession) B(t []T) ([]T, error) {
 	return _TupleTest2.Contract.B(&_TupleTest2.CallOpts, t)
 }
 
 // F is a free data retrieval call binding the contract method 0x6f2be728.
 //
-// Solidity: function f(TupleTest2S s, T t, uint256 u) view returns()
+// Solidity: function f((uint256,uint256[],(uint256,uint256)[]) s, (uint256,uint256) t, uint256 u) view returns()
 func (_TupleTest2 *TupleTest2Caller) F(opts *bind.CallOpts, s TupleTest2S, t T, u *big.Int) error {
-	var ()
-	out := &[]interface{}{}
-	err := _TupleTest2.contract.Call(opts, out, "f", s, t, u)
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "f", s, t, u)
+
+	if err != nil {
+		return err
+	}
+
 	return err
 }
 
 // F is a free data retrieval call binding the contract method 0x6f2be728.
 //
-// Solidity: function f(TupleTest2S s, T t, uint256 u) view returns()
+// Solidity: function f((uint256,uint256[],(uint256,uint256)[]) s, (uint256,uint256) t, uint256 u) view returns()
 func (_TupleTest2 *TupleTest2Session) F(s TupleTest2S, t T, u *big.Int) error {
 	return _TupleTest2.Contract.F(&_TupleTest2.CallOpts, s, t, u)
 }
 
 // F is a free data retrieval call binding the contract method 0x6f2be728.
 //
-// Solidity: function f(TupleTest2S s, T t, uint256 u) view returns()
+// Solidity: function f((uint256,uint256[],(uint256,uint256)[]) s, (uint256,uint256) t, uint256 u) view returns()
 func (_TupleTest2 *TupleTest2CallerSession) F(s TupleTest2S, t T, u *big.Int) error {
 	return _TupleTest2.Contract.F(&_TupleTest2.CallOpts, s, t, u)
 }
 
 // G is a free data retrieval call binding the contract method 0xe2179b8e.
 //
-// Solidity: function g() view returns(TupleTest2S, T, uint256)
+// Solidity: function g() view returns((uint256,uint256[],(uint256,uint256)[]), (uint256,uint256), uint256)
 func (_TupleTest2 *TupleTest2Caller) G(opts *bind.CallOpts) (TupleTest2S, T, *big.Int, error) {
-	var (
-		ret0 = new(TupleTest2S)
-		ret1 = new(T)
-		ret2 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "g")
+
+	if err != nil {
+		return *new(TupleTest2S), *new(T), *new(*big.Int), err
 	}
-	err := _TupleTest2.contract.Call(opts, out, "g")
-	return *ret0, *ret1, *ret2, err
+
+	return bind.ToStruct(out[0], *new(TupleTest2S)).(TupleTest2S), bind.ToStruct(out[1], *new(T)).(T), bind.ToStruct(out[2], *new(*big.Int)).(*big.Int), err
 }
 
 // G is a free data retrieval call binding the contract method 0xe2179b8e.
 //
-// Solidity: function g() view returns(TupleTest2S, T, uint256)
+// Solidity: function g() view returns((uint256,uint256[],(uint256,uint256)[]), (uint256,uint256), uint256)
 func (_TupleTest2 *TupleTest2Session) G() (TupleTest2S, T, *big.Int, error) {
 	return _TupleTest2.Contract.G(&_TupleTest2.CallOpts)
 }
 
 // G is a free data retrieval call binding the contract method 0xe2179b8e.
 //
-// Solidity: function g() view returns(TupleTest2S, T, uint256)
+// Solidity: function g() view returns((uint256,uint256[],(uint256,uint256)[]), (uint256,uint256), uint256)
 func (_TupleTest2 *TupleTest2CallerSession) G() (TupleTest2S, T, *big.Int, error) {
 	return _TupleTest2.Contract.G(&_TupleTest2.CallOpts)
 }
 
 // Method is a free data retrieval call binding the contract method 0xab41fe7a.
 //
-// Solidity: function method(TupleTest2A a, uint256 b) view returns()
+// Solidity: function method((uint256,uint256[]) a, uint256 b) view returns()
 func (_TupleTest2 *TupleTest2Caller) Method(opts *bind.CallOpts, a TupleTest2A, b *big.Int) error {
-	var ()
-	out := &[]interface{}{}
-	err := _TupleTest2.contract.Call(opts, out, "method", a, b)
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "method", a, b)
+
+	if err != nil {
+		return err
+	}
+
 	return err
 }
 
 // Method is a free data retrieval call binding the contract method 0xab41fe7a.
 //
-// Solidity: function method(TupleTest2A a, uint256 b) view returns()
+// Solidity: function method((uint256,uint256[]) a, uint256 b) view returns()
 func (_TupleTest2 *TupleTest2Session) Method(a TupleTest2A, b *big.Int) error {
 	return _TupleTest2.Contract.Method(&_TupleTest2.CallOpts, a, b)
 }
 
 // Method is a free data retrieval call binding the contract method 0xab41fe7a.
 //
-// Solidity: function method(TupleTest2A a, uint256 b) view returns()
+// Solidity: function method((uint256,uint256[]) a, uint256 b) view returns()
 func (_TupleTest2 *TupleTest2CallerSession) Method(a TupleTest2A, b *big.Int) error {
 	return _TupleTest2.Contract.Method(&_TupleTest2.CallOpts, a, b)
 }
@@ -2185,7 +2387,7 @@ type TupleTest2EvF struct {
 
 // FilterEvF is a free log retrieval operation binding the contract event 0x5490ef71cb8b76b3f0788e975052f0f43ba07bc17bae7ea289ee00e50b4d8485.
 //
-// Solidity: event evF(TupleTest2S arg0, T arg1, uint256 arg2)
+// Solidity: event evF((uint256,uint256[],(uint256,uint256)[]) arg0, (uint256,uint256) arg1, uint256 arg2)
 func (_TupleTest2 *TupleTest2Filterer) FilterEvF(opts *bind.FilterOpts) (*TupleTest2EvFIterator, error) {
 
 	logs, sub, err := _TupleTest2.contract.FilterLogs(opts, "evF")
@@ -2197,7 +2399,7 @@ func (_TupleTest2 *TupleTest2Filterer) FilterEvF(opts *bind.FilterOpts) (*TupleT
 
 // WatchEvF is a free log subscription operation binding the contract event 0x5490ef71cb8b76b3f0788e975052f0f43ba07bc17bae7ea289ee00e50b4d8485.
 //
-// Solidity: event evF(TupleTest2S arg0, T arg1, uint256 arg2)
+// Solidity: event evF((uint256,uint256[],(uint256,uint256)[]) arg0, (uint256,uint256) arg1, uint256 arg2)
 func (_TupleTest2 *TupleTest2Filterer) WatchEvF(opts *bind.WatchOpts, sink chan<- *TupleTest2EvF) (event.Subscription, error) {
 
 	logs, sub, err := _TupleTest2.contract.WatchLogs(opts, "evF")
@@ -2234,7 +2436,7 @@ func (_TupleTest2 *TupleTest2Filterer) WatchEvF(opts *bind.WatchOpts, sink chan<
 
 // ParseEvF is a log parse operation binding the contract event 0x5490ef71cb8b76b3f0788e975052f0f43ba07bc17bae7ea289ee00e50b4d8485.
 //
-// Solidity: event evF(TupleTest2S arg0, T arg1, uint256 arg2)
+// Solidity: event evF((uint256,uint256[],(uint256,uint256)[]) arg0, (uint256,uint256) arg1, uint256 arg2)
 func (_TupleTest2 *TupleTest2Filterer) ParseEvF(log types.Log) (*TupleTest2EvF, error) {
 	event := new(TupleTest2EvF)
 	if err := _TupleTest2.contract.UnpackLog(event, "evF", log); err != nil {
@@ -2252,7 +2454,7 @@ var VoidTestFuncSigs = map[string]string{
 }
 
 // VoidTestBin is the compiled bytecode used for deploying new contracts.
-var VoidTestBin = "0x6080604052348015600f57600080fd5b50608e8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80639a40e3f614602d575b600080fd5b603c60383660046041565b603e565b005b50565b6000602082840312156051578081fd5b503591905056fea2646970667358221220e50ea7631b2e419244153a00591c788bfd1b2583cd44e8d5237b99969598a95f64736f6c63430006050033"
+var VoidTestBin = "0x6080604052348015600f57600080fd5b50608e8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80639a40e3f614602d575b600080fd5b603c60383660046041565b603e565b005b50565b6000602082840312156051578081fd5b503591905056fea264697066735822122098bb6892d940aac882970002272e80ab89492979faafc0a3f1c1095e3dd44a4164736f6c63430006050033"
 
 // DeployVoidTest deploys a new Ethereum contract, binding an instance of VoidTest to it.
 func DeployVoidTest(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *VoidTest, error) {
@@ -2376,7 +2578,7 @@ func bindVoidTest(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_VoidTest *VoidTestRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_VoidTest *VoidTestRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _VoidTest.Contract.VoidTestCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -2395,7 +2597,7 @@ func (_VoidTest *VoidTestRaw) Transact(opts *bind.TransactOpts, method string, p
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_VoidTest *VoidTestCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_VoidTest *VoidTestCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _VoidTest.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -2414,9 +2616,13 @@ func (_VoidTest *VoidTestTransactorRaw) Transact(opts *bind.TransactOpts, method
 //
 // Solidity: function method(uint256 a) view returns()
 func (_VoidTest *VoidTestCaller) Method(opts *bind.CallOpts, a *big.Int) error {
-	var ()
-	out := &[]interface{}{}
-	err := _VoidTest.contract.Call(opts, out, "method", a)
+	var out []interface{}
+	err := _VoidTest.contract.Call(opts, &out, "method", a)
+
+	if err != nil {
+		return err
+	}
+
 	return err
 }
 
