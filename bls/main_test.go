@@ -70,6 +70,8 @@ func TestFallbackOffline(t *testing.T) {
 	panic("aadsf")
 }
 */
+
+/*
 func TestMulG2Live(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
 	defer cancel()
@@ -82,7 +84,7 @@ func TestMulG2Live(t *testing.T) {
 	transactor := bind.NewKeyedTransactor(sk)
 	config := MutationConfig{
 		bin:          true,
-		corpus:       make([][]byte, 0),
+		corpus:       makeCorpus(),
 		MaxInputSize: 4096,
 	}
 
@@ -94,6 +96,48 @@ func TestMulG2Live(t *testing.T) {
 			rand.Read(mul)
 			tx, err = contract.CallWithMutation(transactor, common.BigToAddress(big.NewInt(0x0e)), append(input, mul...))
 			iv = append(input, mul...)
+		}
+		if err == nil {
+			_, err = bind.WaitMined(ctx, backend, tx)
+			t.Logf("Call successful: %d", i)
+			b, err := contract.LastSuccess(nil)
+			assert.NoError(t, err)
+			t.Log(b)
+		}
+	}
+
+	panic(err)
+}
+*/
+func TestMulExpG1Live(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
+	defer cancel()
+	backend, sk := getRealBackend()
+	auth := bind.NewKeyedTransactor(sk)
+	_, tx, contract, err := DeployEIP2537Caller(auth, backend)
+	assert.NoError(t, err)
+	_, err = bind.WaitDeployed(ctx, backend, tx)
+	assert.NoError(t, err)
+	transactor := bind.NewKeyedTransactor(sk)
+	config := MutationConfig{
+		bin:          true,
+		corpus:       makeCorpus(),
+		MaxInputSize: 4096,
+	}
+	_ = rand.Int()
+
+	iv := []byte{1, 2, 3, 4}
+	for i := 0; i < 1000; i++ {
+		for j := 0; j < 130; j++ {
+			var in []byte
+			for k := 0; k < j; k++ {
+				input := NewG1Point(iv, config)
+				mul := make([]byte, 32)
+				rand.Read(mul)
+				in = append(in, append(input, mul...)...)
+			}
+			tx, err = contract.CallWithMutation(transactor, common.BigToAddress(big.NewInt(0x0c)), in)
+			iv = append(in)
 		}
 		if err == nil {
 			_, err = bind.WaitMined(ctx, backend, tx)
@@ -119,7 +163,7 @@ func TestMulG1Live(t *testing.T) {
 	transactor := bind.NewKeyedTransactor(sk)
 	config := MutationConfig{
 		bin:          true,
-		corpus:       make([][]byte, 0),
+		corpus:       makeCorpus(),
 		MaxInputSize: 4096,
 	}
 

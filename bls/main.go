@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/ecdsa"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -32,4 +33,21 @@ func getRealBackend() (*ethclient.Client, *ecdsa.PrivateKey) {
 		panic(err)
 	}
 	return cl, sk
+}
+
+func makeCorpus() [][]byte {
+
+	dir, err := ioutil.ReadDir("corpus")
+	if err != nil {
+		panic(err)
+	}
+	corpus := make([][]byte, len(dir))
+	for i, info := range dir {
+		in, err := ioutil.ReadFile("corpus/" + info.Name())
+		if err != nil {
+			panic(err)
+		}
+		corpus[i] = in
+	}
+	return corpus
 }
