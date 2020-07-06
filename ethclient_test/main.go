@@ -72,6 +72,6 @@ func main() {
 		_ = signedTx
 		_ = sigTx
 		_ = ksOpts
-
+		_ = acc
 	}
 }
