@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 
-	"github.com/MariusVanDerWijden/go-snippets/ethclient_test/coolcontract"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
+	"github.com/go-snippets/ethclient_test/coolcontract"
 )
 
 func main() {
@@ -87,9 +88,35 @@ func main() {
 		callOpts := &bind.CallOpts{Context: ctx, Pending: false}
 		bal, err := ctr.SeeBalance(callOpts)
 
+		// Filter for a Deposited event
+		filterOpts := &bind.FilterOpts{Context: ctx, Start: 9000000, End: nil}
+		itr, err := ctr.FilterDeposited(filterOpts)
+		// Loop over all found events
+		for itr.Next() {
+			event := itr.Event
+			// Print out all caller addresses
+			fmt.Printf(event.Addr.Hex())
+		}
+
+		// Watch for a Deposited event
+		watchOpts := &bind.WatchOpts{Context: ctx, Start: nil}
+		// Setup a channel for results
+		channel := make(chan *coolcontract.CoolContractDeposited)
+		// Start a goroutine which watches new events
+		go func() {
+			sub, err := ctr.WatchDeposited(watchOpts, channel)
+			defer sub.Unsubscribe()
+		}()
+		// Receive events from the channel
+		event := <-channel
+
+		log := *new(types.Log)
+		event, err := ctr.ParseDeposited(log)
+
 		_ = addr
 		_ = ctr
 		_ = err
 		_ = bal
+		_ = event
 	}
 }

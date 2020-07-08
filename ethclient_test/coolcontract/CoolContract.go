@@ -20,7 +20,6 @@ var (
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
-	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -162,7 +161,7 @@ func bindCoolContract(address common.Address, caller bind.ContractCaller, transa
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_CoolContract *CoolContractRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _CoolContract.Contract.CoolContractCaller.contract.Call(opts, result, method, params...)
+	return _CoolContract.Contract.CoolContractCaller.contract.Call(opts, nil, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
@@ -181,7 +180,7 @@ func (_CoolContract *CoolContractRaw) Transact(opts *bind.TransactOpts, method s
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_CoolContract *CoolContractCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
-	return _CoolContract.Contract.contract.Call(opts, result, method, params...)
+	return _CoolContract.Contract.contract.Call(opts, nil, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
@@ -202,8 +201,8 @@ func (_CoolContract *CoolContractCaller) SeeBalance(opts *bind.CallOpts) (*big.I
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
-	err := _CoolContract.contract.Call(opts, out, "seeBalance")
+	//out := ret0
+	err := _CoolContract.contract.Call(opts, nil, "seeBalance")
 	return *ret0, err
 }
 
