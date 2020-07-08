@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/big"
 
+	"github.com/MariusVanDerWijden/go-snippets/ethclient_test/coolcontract"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
@@ -19,6 +20,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	var transactOpts *bind.TransactOpts
 
 	ctx := context.Background()
 	{
@@ -54,8 +56,8 @@ func main() {
 		tx := types.NewTransaction(nonce, to, amount, gasLimit, gasPrice, data)
 		signedTx, err := types.SignTx(tx, types.NewEIP155Signer(nil), sk)
 		// If you have a bind.TransactOpts object you can also use the following
-		opts := bind.NewKeyedTransactor(sk)
-		sigTx, err := opts.Signer(types.NewEIP155Signer(nil), crypto.PubkeyToAddress(sk.PublicKey), tx)
+		transactOpts = bind.NewKeyedTransactor(sk)
+		sigTx, err := transactOpts.Signer(types.NewEIP155Signer(nil), crypto.PubkeyToAddress(sk.PublicKey), tx)
 
 		// Open Keystore
 		ks := keystore.NewKeyStore("/home/matematik/keystore", keystore.StandardScryptN, keystore.StandardScryptP)
@@ -73,5 +75,21 @@ func main() {
 		_ = sigTx
 		_ = ksOpts
 		_ = acc
+	}
+	// Contract Bindings
+	{
+		backend, err := ethclient.Dial("/tmp/geth.ipc")
+		// Deploy a new contract
+		addr, tx, ctr, err := coolcontract.DeployCoolContract(transactOpts, backend)
+		// Check if the contract was deployed successfully
+		_, err = bind.WaitDeployed(ctx, backend, tx)
+		// Call a pure/view function
+		callOpts := &bind.CallOpts{Context: ctx, Pending: false}
+		bal, err := ctr.SeeBalance(callOpts)
+
+		_ = addr
+		_ = ctr
+		_ = err
+		_ = bal
 	}
 }
