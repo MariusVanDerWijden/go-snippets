@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"time"
 
+	"github.com/MariusVanDerWijden/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -87,6 +90,12 @@ func main() {
 		// Call a pure/view function
 		callOpts := &bind.CallOpts{Context: ctx, Pending: false}
 		bal, err := ctr.SeeBalance(callOpts)
+		// Call a normal function
+		tx, err := ctr.Deposit(transactOpts)
+		receipt, err := bind.WaitMined(ctx, backend, tx)
+		if receipt.Status != types.ReceiptStatusSuccessful {
+			panic("Call failed")
+		}
 
 		// Filter for a Deposited event
 		filterOpts := &bind.FilterOpts{Context: ctx, Start: 9000000, End: nil}
@@ -118,5 +127,45 @@ func main() {
 		_ = err
 		_ = bal
 		_ = event
+	}
+	// SimulatedBackend
+	{
+		// Create a new SimulatedBackend with a default allocation
+		backend := backends.NewSimulatedBackend(core.DefaultGenesisBlock().Alloc, 9000000)
+		bal, err := backend.BalanceAt(ctx, common.HexToAddress("0x000"), nil)
+
+		// Create a meaningful allocation with a faucet secret key
+		faucetSK, err := crypto.GenerateKey()
+		faucetAddr := crypto.PubkeyToAddress(faucetSK.PublicKey)
+		addr := map[common.Address]core.GenesisAccount{
+			common.BytesToAddress([]byte{1}): {Balance: big.NewInt(1)}, // ECRecover
+			common.BytesToAddress([]byte{2}): {Balance: big.NewInt(1)}, // SHA256
+			common.BytesToAddress([]byte{3}): {Balance: big.NewInt(1)}, // RIPEMD
+			common.BytesToAddress([]byte{4}): {Balance: big.NewInt(1)}, // Identity
+			common.BytesToAddress([]byte{5}): {Balance: big.NewInt(1)}, // ModExp
+			common.BytesToAddress([]byte{6}): {Balance: big.NewInt(1)}, // ECAdd
+			common.BytesToAddress([]byte{7}): {Balance: big.NewInt(1)}, // ECScalarMul
+			common.BytesToAddress([]byte{8}): {Balance: big.NewInt(1)}, // ECPairing
+			faucetAddr:                       {Balance: new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(9))},
+		}
+		alloc := core.GenesisAlloc(addr)
+		backend := backends.NewSimulatedBackend(alloc, 9000000)
+
+		// Rollback and Commit pending transactions
+		tx, tx2, tx3 := new(types.Transaction), new(types.Transaction), new(types.Transaction)
+		// Send and abort both transactions
+		backend.SendTransaction(ctx, tx)
+		backend.SendTransaction(ctx, tx2)
+		backend.Rollback()
+		// Commits transaction to the chain
+		backend.SendTransaction(ctx, tx3)
+		backend.Commit()
+		// Use adjust time to test time-dependent functions
+		backend.AdjustTime(24 * time.Hour)
+		// Adjust time can only be called on an empty block and you need to call commit afterwards
+		backend.Commit()
+
+		_ = bal
+		_ = err
 	}
 }
