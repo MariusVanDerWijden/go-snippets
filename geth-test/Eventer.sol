@@ -118,8 +118,3 @@ contract TupleTest2 {
 contract VoidTest {
      function method(uint a) view public {}
 }
-
-contract Overloader {
-    struct F { uint _f; uint __f; uint f; }
-    function f(F memory f) public {}
-}
