@@ -6,9 +6,11 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 	"runtime"
+	"sync"
 
 	"golang.org/x/sys/unix"
 )
@@ -142,8 +144,8 @@ func (u *udphdr) checksum(ip *iphdr, payload []byte) {
 }
 
 func Spoof() {
-	ipsrcstr := "127.0.0.1"
-	ipdststr := "127.0.0.1"
+	ipsrcstr := "2001:41b8:83f:4250::50"
+	ipdststr := "130.83.186.170"
 	udpsrc := uint(13338)
 	udpdst := uint(13337)
 	showcsum := false
@@ -238,22 +240,36 @@ func Spoof() {
 		bb[2], bb[3] = bb[3], bb[2]
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		buf := make([]byte, 8)
+		nr, err := unix.Read(fd, buf)
+		if err != nil {
+			return
+		}
+		fmt.Printf("Read: %x : %v", buf, nr)
+		wg.Done()
+	}()
+
 	err = unix.Sendto(fd, bb, 0, &addr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error sending the packet: %v\n", err)
 	}
 	fmt.Printf("%v bytes were sent\n", len(bb))
-
-	buf := make([]byte, 512)
-	nr, err := unix.Read(fd, buf)
-	if err != nil {
-		return
-	}
-	fmt.Printf("Read: %x : %v", buf, nr)
-
+	wg.Wait()
 	err = unix.Close(fd)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error closing the socket: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+func RSA() {
+	buf, err := ioutil.ReadFile("input.bin")
+	if err != nil {
+		fmt.Print("err reading file")
+	}
+	rsa_enc := buf[:16]
+	
 }
