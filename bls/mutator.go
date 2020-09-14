@@ -1,8 +1,14 @@
+// This code is a slightly modified version of the mutator used in the go-fuzz-project.
+// Copyright 2015 go-fuzz project authors. All rights reserved.
+// Use of this source code is governed by Apache 2 LICENSE that can be found in https://github.com/dvyukov/go-fuzz/blob/master/LICENSE.
+
 package main
 
-import "math/rand"
-import "encoding/binary"
-import "strconv"
+import (
+	"encoding/binary"
+	"math/rand"
+	"strconv"
+)
 
 var (
 	interesting8  = []int8{-128, -1, 0, 1, 16, 32, 64, 100, 127}
@@ -20,11 +26,11 @@ func init() {
 }
 
 type MutationConfig struct {
-	bin bool
-	corpus [][]byte
+	bin          bool
+	corpus       [][]byte
 	MaxInputSize int
 	// Literals
-	lits [][]byte
+	lits    [][]byte
 	strLits []string
 }
 
@@ -36,7 +42,7 @@ func Mutate(input []byte, config MutationConfig) []byte {
 	if config.bin {
 		// Last 4 transformations are not suitable for binary data
 		upper = 16
-	} 
+	}
 	for iter := 0; iter < iterations; iter++ {
 		switch rand.Intn(upper) {
 		case 0:
@@ -192,7 +198,7 @@ func copyRange(res []byte) []byte {
 	}
 	copy(res[dst:], res[src:src+n])
 	return res
-} 
+}
 
 func bitFlip(res []byte) []byte {
 	// Bit flip. Spooky!
@@ -204,7 +210,7 @@ func bitFlip(res []byte) []byte {
 	return res
 }
 
-func randomBit(res []byte) []byte{
+func randomBit(res []byte) []byte {
 	// Set a byte to a random value.
 	if len(res) == 0 {
 		return res
@@ -259,7 +265,7 @@ func addSubUint16(res []byte) []byte {
 	return res
 }
 
-func addSubUint32(res []byte) []byte{
+func addSubUint32(res []byte) []byte {
 	// Add/subtract from a uint32.
 	if len(res) < 4 {
 		return res
@@ -401,7 +407,7 @@ func replaceMultiAscii(res []byte) []byte {
 	return res
 }
 
-func spliceInput(res []byte,corpus [][]byte ) []byte{
+func spliceInput(res []byte, corpus [][]byte) []byte {
 	// Splice another input.
 	if len(res) < 4 || len(corpus) < 2 {
 		return res
@@ -428,7 +434,7 @@ func spliceInput(res []byte,corpus [][]byte ) []byte{
 	return res
 }
 
-func insertInput(res []byte, corpus [][]byte )  []byte {
+func insertInput(res []byte, corpus [][]byte) []byte {
 	// Insert a part of another input.
 	if len(res) < 4 || len(corpus) < 2 {
 		return res
@@ -450,7 +456,7 @@ func insertInput(res []byte, corpus [][]byte )  []byte {
 	return res
 }
 
-func insertLiteral(res []byte ,intLits [][]byte ,strLits []string ) []byte {
+func insertLiteral(res []byte, intLits [][]byte, strLits []string) []byte {
 	// Insert a literal.
 	// TODO: encode int literals in big-endian, base-128, etc.
 	if len(intLits) == 0 && len(strLits) == 0 {
@@ -474,7 +480,7 @@ func insertLiteral(res []byte ,intLits [][]byte ,strLits []string ) []byte {
 	return res
 }
 
-func replaceLiteral(res []byte ,intLits [][]byte ,strLits []string ) []byte {
+func replaceLiteral(res []byte, intLits [][]byte, strLits []string) []byte {
 	// Replace with literal.
 	if len(intLits) == 0 && len(strLits) == 0 {
 		return res
