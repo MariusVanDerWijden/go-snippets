@@ -60,6 +60,7 @@ func TestArray(t *testing.T) {
 	assert.Equal(t, state[3][1], uint8(7))
 }
 
+/*
 func TestIsArray(t *testing.T) {
 	backend, sk := getSimBackend()
 	transactor := bind.NewKeyedTransactor(sk)
@@ -76,4 +77,4 @@ func TestIsArray(t *testing.T) {
 	is, err = IsArray(&checkopts, backend)
 	assert.NoError(t, err, "IsArray should not fail")
 	assert.True(t, is, "IsArray should return true once contract is deployed")
-}
+}*/

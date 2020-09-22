@@ -77,14 +77,6 @@ func DeployArray(auth *bind.TransactOpts, backend bind.ContractBackend) (common.
 	return address, tx, &Array{ArrayCaller: ArrayCaller{contract: contract}, ArrayTransactor: ArrayTransactor{contract: contract}, ArrayFilterer: ArrayFilterer{contract: contract}}, nil
 }
 
-// ArrayCodeHash is the hash of the bytecode as deployed on-chain.
-var ArrayCodeHash = "0x57e558964f1e519d994660a5b18d0c3923dcd8ab9e94743d67f81b363f9db319"
-
-// IsArray checks whether a contract at this address is an instance of Array.
-func IsArray(checkOpts *bind.CheckOpts, backend bind.ContractBackend) (bool, error) {
-	return bind.CheckContract(checkOpts, ArrayCodeHash, backend)
-}
-
 // Array is an auto generated Go binding around an Ethereum contract.
 type Array struct {
 	ArrayCaller     // Read-only binding to the contract
@@ -277,14 +269,6 @@ func DeployBigBoard(auth *bind.TransactOpts, backend bind.ContractBackend) (comm
 		return common.Address{}, nil, nil, err
 	}
 	return address, tx, &BigBoard{BigBoardCaller: BigBoardCaller{contract: contract}, BigBoardTransactor: BigBoardTransactor{contract: contract}, BigBoardFilterer: BigBoardFilterer{contract: contract}}, nil
-}
-
-// BigBoardCodeHash is the hash of the bytecode as deployed on-chain.
-var BigBoardCodeHash = "0xabbc6236cb35e0c89e94d86b5399ac76f57be5db31415df657c365c909ed33f4"
-
-// IsBigBoard checks whether a contract at this address is an instance of BigBoard.
-func IsBigBoard(checkOpts *bind.CheckOpts, backend bind.ContractBackend) (bool, error) {
-	return bind.CheckContract(checkOpts, BigBoardCodeHash, backend)
 }
 
 // BigBoard is an auto generated Go binding around an Ethereum contract.
@@ -501,14 +485,6 @@ func DeployEventer(auth *bind.TransactOpts, backend bind.ContractBackend) (commo
 		return common.Address{}, nil, nil, err
 	}
 	return address, tx, &Eventer{EventerCaller: EventerCaller{contract: contract}, EventerTransactor: EventerTransactor{contract: contract}, EventerFilterer: EventerFilterer{contract: contract}}, nil
-}
-
-// EventerCodeHash is the hash of the bytecode as deployed on-chain.
-var EventerCodeHash = "0x452d4f341c5b4453c570602d83f145e951658f6e94cc5277460c18c983fe5d6d"
-
-// IsEventer checks whether a contract at this address is an instance of Eventer.
-func IsEventer(checkOpts *bind.CheckOpts, backend bind.ContractBackend) (bool, error) {
-	return bind.CheckContract(checkOpts, EventerCodeHash, backend)
 }
 
 // Eventer is an auto generated Go binding around an Ethereum contract.
@@ -1022,14 +998,6 @@ func DeployReceiveFallback(auth *bind.TransactOpts, backend bind.ContractBackend
 	return address, tx, &ReceiveFallback{ReceiveFallbackCaller: ReceiveFallbackCaller{contract: contract}, ReceiveFallbackTransactor: ReceiveFallbackTransactor{contract: contract}, ReceiveFallbackFilterer: ReceiveFallbackFilterer{contract: contract}}, nil
 }
 
-// ReceiveFallbackCodeHash is the hash of the bytecode as deployed on-chain.
-var ReceiveFallbackCodeHash = "0x1f97d0c00a845a4b821f2c4bdc0492ba79ebced14cb7cf308eda44b0f4350883"
-
-// IsReceiveFallback checks whether a contract at this address is an instance of ReceiveFallback.
-func IsReceiveFallback(checkOpts *bind.CheckOpts, backend bind.ContractBackend) (bool, error) {
-	return bind.CheckContract(checkOpts, ReceiveFallbackCodeHash, backend)
-}
-
 // ReceiveFallback is an auto generated Go binding around an Ethereum contract.
 type ReceiveFallback struct {
 	ReceiveFallbackCaller     // Read-only binding to the contract
@@ -1506,14 +1474,6 @@ func DeployTupleTest(auth *bind.TransactOpts, backend bind.ContractBackend) (com
 	return address, tx, &TupleTest{TupleTestCaller: TupleTestCaller{contract: contract}, TupleTestTransactor: TupleTestTransactor{contract: contract}, TupleTestFilterer: TupleTestFilterer{contract: contract}}, nil
 }
 
-// TupleTestCodeHash is the hash of the bytecode as deployed on-chain.
-var TupleTestCodeHash = "0x3b503c53671bccd5a16c0f8a7eb29269eac19ef8b61bd8a4a7bf0e471b4c3c4b"
-
-// IsTupleTest checks whether a contract at this address is an instance of TupleTest.
-func IsTupleTest(checkOpts *bind.CheckOpts, backend bind.ContractBackend) (bool, error) {
-	return bind.CheckContract(checkOpts, TupleTestCodeHash, backend)
-}
-
 // TupleTest is an auto generated Go binding around an Ethereum contract.
 type TupleTest struct {
 	TupleTestCaller     // Read-only binding to the contract
@@ -1871,14 +1831,6 @@ func DeployTupleTest2(auth *bind.TransactOpts, backend bind.ContractBackend) (co
 		return common.Address{}, nil, nil, err
 	}
 	return address, tx, &TupleTest2{TupleTest2Caller: TupleTest2Caller{contract: contract}, TupleTest2Transactor: TupleTest2Transactor{contract: contract}, TupleTest2Filterer: TupleTest2Filterer{contract: contract}}, nil
-}
-
-// TupleTest2CodeHash is the hash of the bytecode as deployed on-chain.
-var TupleTest2CodeHash = "0x20bb9d37d04ba76f8d07e1b005d9e95083088db23d228ef8c86777ec80c4f58e"
-
-// IsTupleTest2 checks whether a contract at this address is an instance of TupleTest2.
-func IsTupleTest2(checkOpts *bind.CheckOpts, backend bind.ContractBackend) (bool, error) {
-	return bind.CheckContract(checkOpts, TupleTest2CodeHash, backend)
 }
 
 // TupleTest2 is an auto generated Go binding around an Ethereum contract.
@@ -2313,14 +2265,6 @@ func DeployVoidTest(auth *bind.TransactOpts, backend bind.ContractBackend) (comm
 		return common.Address{}, nil, nil, err
 	}
 	return address, tx, &VoidTest{VoidTestCaller: VoidTestCaller{contract: contract}, VoidTestTransactor: VoidTestTransactor{contract: contract}, VoidTestFilterer: VoidTestFilterer{contract: contract}}, nil
-}
-
-// VoidTestCodeHash is the hash of the bytecode as deployed on-chain.
-var VoidTestCodeHash = "0x56d95b46107923f79efe88e374626717c1a5da3dcd31b42be02647e0132f16e7"
-
-// IsVoidTest checks whether a contract at this address is an instance of VoidTest.
-func IsVoidTest(checkOpts *bind.CheckOpts, backend bind.ContractBackend) (bool, error) {
-	return bind.CheckContract(checkOpts, VoidTestCodeHash, backend)
 }
 
 // VoidTest is an auto generated Go binding around an Ethereum contract.

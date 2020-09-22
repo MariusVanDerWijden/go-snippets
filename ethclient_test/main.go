@@ -6,8 +6,8 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/MariusVanDerWijden/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
@@ -91,7 +91,7 @@ func main() {
 		callOpts := &bind.CallOpts{Context: ctx, Pending: false}
 		bal, err := ctr.SeeBalance(callOpts)
 		// Call a normal function
-		tx, err := ctr.Deposit(transactOpts)
+		tx, err = ctr.Deposit(transactOpts)
 		receipt, err := bind.WaitMined(ctx, backend, tx)
 		if receipt.Status != types.ReceiptStatusSuccessful {
 			panic("Call failed")
@@ -113,14 +113,14 @@ func main() {
 		channel := make(chan *coolcontract.CoolContractDeposited)
 		// Start a goroutine which watches new events
 		go func() {
-			sub, err := ctr.WatchDeposited(watchOpts, channel)
+			sub, _ := ctr.WatchDeposited(watchOpts, channel)
 			defer sub.Unsubscribe()
 		}()
 		// Receive events from the channel
 		event := <-channel
 
 		log := *new(types.Log)
-		event, err := ctr.ParseDeposited(log)
+		event, err = ctr.ParseDeposited(log)
 
 		_ = addr
 		_ = ctr
@@ -149,7 +149,7 @@ func main() {
 			faucetAddr:                       {Balance: new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(9))},
 		}
 		alloc := core.GenesisAlloc(addr)
-		backend := backends.NewSimulatedBackend(alloc, 9000000)
+		backend = backends.NewSimulatedBackend(alloc, 9000000)
 
 		// Rollback and Commit pending transactions
 		tx, tx2, tx3 := new(types.Transaction), new(types.Transaction), new(types.Transaction)
