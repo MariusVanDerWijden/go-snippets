@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"crypto/sha1"
+	"io/ioutil"
 	"math/big"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 
@@ -258,4 +261,125 @@ func TestAddLive(t *testing.T) {
 	}
 
 	panic(err)
+}
+
+func TestCreateCorpi(t *testing.T) {
+	numTests := 100
+	type test struct {
+		dir    string
+		create func(iv []byte, config MutationConfig) []byte
+	}
+	tests := []test{
+		{
+			dir: "addg1corpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				input := NewG1Point(iv, config)
+				input2 := NewG1Point(iv, config)
+				return append(input, input2...)
+			},
+		},
+		{
+			dir: "addg2corpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				input := NewG2Point(iv, config)
+				input2 := NewG2Point(iv, config)
+				return append(input, input2...)
+			},
+		},
+		{
+			dir: "mulg1corpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				input := NewG1Point(iv, config)
+				mul := make([]byte, 32)
+				rand.Read(mul)
+				return append(input, mul...)
+			},
+		},
+		{
+			dir: "mulg2corpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				input := NewG2Point(iv, config)
+				mul := make([]byte, 32)
+				rand.Read(mul)
+				return append(input, mul...)
+			},
+		},
+		{
+			dir: "mulg1expcorpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				var in []byte
+				upper := int(rand.Int31n(150))
+				for k := 0; k < upper; k++ {
+					input := NewG1Point(iv, config)
+					mul := make([]byte, 32)
+					rand.Read(mul)
+					in = append(in, append(input, mul...)...)
+				}
+				return in
+			},
+		},
+		{
+			dir: "mulg2expcorpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				var in []byte
+				upper := int(rand.Int31n(150))
+				for k := 0; k < upper; k++ {
+					input := NewG2Point(iv, config)
+					mul := make([]byte, 32)
+					rand.Read(mul)
+					in = append(in, append(input, mul...)...)
+				}
+				return in
+			},
+		},
+		{
+			dir: "pairingcorpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				input := NewG1Point(iv, config)
+				input2 := NewG2Point(iv, config)
+				return append(input, input2...)
+			},
+		},
+		{
+			dir: "mapg1corpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				input := NewFieldElement(iv, config)
+				return input
+			},
+		},
+		{
+			dir: "mapg2corpus",
+			create: func(iv []byte, config MutationConfig) []byte {
+				a := NewFieldElement(iv, config)
+				b := NewFieldElement(a, config)
+				return append(a, b...)
+			},
+		},
+	}
+	for _, t := range tests {
+		if _, err := os.Stat(t.dir); os.IsNotExist(err) {
+			os.Mkdir(t.dir, 0777)
+		} else if err != nil {
+			panic(err)
+		}
+		createCorpus(numTests, t.dir, t.create)
+	}
+}
+
+func createCorpus(tests int, dir string, create func(iv []byte, config MutationConfig) []byte) {
+	config := MutationConfig{
+		bin:          true,
+		corpus:       makeCorpus(),
+		MaxInputSize: 4096,
+	}
+	iv := []byte{1, 2, 3}
+	for i := 0; i < tests; i++ {
+		data := create(iv, config)
+		iv = append(iv, data...)
+		name := sha1.Sum(data)
+		filename := dir + "/" + common.Bytes2Hex(name[:])
+		if err := ioutil.WriteFile(filename, data, 0755); err != nil {
+			panic(err)
+		}
+	}
 }
