@@ -2,7 +2,6 @@ package geth
 
 import (
 	"crypto/ecdsa"
-	"math"
 	"math/big"
 	"testing"
 	"time"
@@ -18,7 +17,7 @@ import (
 func TestTellor(t *testing.T) {
 	backend, sk := getSimBackend()
 	transactor := bind.NewKeyedTransactor(sk)
-	_, tx, tellor, err := DeployTellor(transactor, backend)
+	_, tx, contract, err := DeployReverter(transactor, backend)
 	if err != nil {
 		t.Fail()
 	}
@@ -29,27 +28,15 @@ func TestTellor(t *testing.T) {
 		t.Error(err)
 	}
 	_ = addr
-	_ = tellor
-}
-
-func TestGivenTellor(t *testing.T) {
-	key, err := crypto.GenerateKey()
-	auth := bind.NewKeyedTransactor(key)
-
-	sim := backends.NewSimulatedBackend(core.GenesisAlloc{auth.From: {Balance: big.NewInt(math.MaxInt64)}}, math.MaxInt64)
-
-	address, tx, _, err := DeployTellor(auth, sim)
+	tx, err = contract.Revert(transactor)
 	if err != nil {
 		t.Error(err)
 	}
-	sim.Commit()
-	ctx, _ := context.WithDeadline(context.Background(), time.Now().Add(5*time.Second))
-	addr, err := bind.WaitDeployed(ctx, sim, tx)
+	rec, err := bind.WaitMined(context.Background(), backend, tx)
 	if err != nil {
 		t.Error(err)
 	}
-	_ = addr
-	_ = address
+	_ = rec
 }
 
 var (

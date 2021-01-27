@@ -28,7 +28,7 @@ func getRealBackend() (*ethclient.Client, *ecdsa.PrivateKey) {
 	if crypto.PubkeyToAddress(sk.PublicKey).Hex() != ADDR {
 		panic(fmt.Sprintf("wrong address want %s got %s", crypto.PubkeyToAddress(sk.PublicKey).Hex(), ADDR))
 	}
-	cl, err := ethclient.Dial("/home/matematik/.yolo/geth.ipc")
+	cl, err := ethclient.Dial("/home/matematik/.yolo2/geth.ipc")
 	if err != nil {
 		panic(err)
 	}
