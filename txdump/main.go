@@ -26,7 +26,7 @@ func main() {
 	}
 	senders := make(map[common.Address]int)
 	fmt.Printf("head: %v\n", head)
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 1000; i++ {
 		block, err := cl.BlockByNumber(context.Background(), new(big.Int).SetUint64(head-uint64(i)))
 		if err != nil {
 			panic(err)
@@ -46,5 +46,9 @@ func main() {
 	}
 	fmt.Printf("prot: %v , unprot: %v\n", protected, unprotected)
 	fmt.Printf("Unique senders: %v\n", len(senders))
-	fmt.Printf("%v\n", senders)
+	for s := range senders {
+		if senders[s] > 1 {
+			fmt.Printf("%v : %v\n", s, senders[s])
+		}
+	}
 }
