@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/big"
 	"math/rand"
+	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -48,30 +49,63 @@ func sendTx(sk *ecdsa.PrivateKey, backend *ethclient.Client) {
 
 func main() {
 	cl, sk := getRealBackend()
+
+	//sendTx(sk, cl)
 	/*
 		io, _, _, _, _, err := deploy(sk, cl)
 		if err != nil {
 			panic(err)
 		}
 		_ = io
-	*/
-	sendTx(sk, cl)
-	/*
-		for i := 0; i < 10000; i++ {
-			/*
-				if err := ioFuzz(io, sk, cl); err != nil {
-					panic(err)
-				}
-
-			if err := jumpSubFuzz(cl, sk); err != nil {
-				fmt.Printf("%v \n", err)
+		for i := 0; i < 1000; i++ {
+			if err := ioFuzz(io, sk, cl); err != nil {
+				panic(err)
 			}
-			time.Sleep(50 * time.Millisecond)
-		}*/
+			time.Sleep(500 * time.Millisecond)
+		}
+	*/
+	/*
+		if err := jumpSubFuzz(cl, sk); err != nil {
+			fmt.Printf("%v \n", err)
+		}
+		time.Sleep(50 * time.Millisecond)
+	}*/
+	startBlock := uint64(9000000)
+	for i := 0; i < 1000; i++ {
+		if err := resendTx(sk, cl, startBlock+uint64(i)); err != nil {
+			panic(err)
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+}
+
+func resendTx(sk *ecdsa.PrivateKey, cl *ethclient.Client, number uint64) error {
+	block, err := cl.BlockByNumber(context.Background(), new(big.Int).SetUint64(number))
+	if service == nil {
+		service, err = testNode(common.Address{}, []byte{})
+		if err != nil {
+			return err
+		}
+	}
+	for _, tx := range block.Transactions() {
+		tx, err := txToAccessListTx(sk, cl, tx, service)
+		if err != nil {
+			fmt.Printf("Txlist err: %v\n", err)
+			continue
+		}
+		if err := cl.SendTransaction(context.Background(), tx); err != nil {
+			fmt.Println(err)
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+	return nil
 }
 
 func ioFuzz(io *IO, sk *ecdsa.PrivateKey, cl *ethclient.Client) error {
-	txopts := bind.NewKeyedTransactor(sk)
+	txopts, err := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(3))
+	if err != nil {
+		return err
+	}
 	var slot [32]byte
 	var value [32]byte
 	rand.Read(slot[:])
@@ -125,7 +159,7 @@ func getRealBackend() (*ethclient.Client, *ecdsa.PrivateKey) {
 	if crypto.PubkeyToAddress(sk.PublicKey).Hex() != ADDR {
 		panic(fmt.Sprintf("wrong address want %s got %s", crypto.PubkeyToAddress(sk.PublicKey).Hex(), ADDR))
 	}
-	cl, err := ethclient.Dial("/home/matematik/.yolov3_2/geth.ipc")
+	cl, err := ethclient.Dial("http://127.0.0.1:8545")
 	if err != nil {
 		panic(err)
 	}
@@ -133,7 +167,10 @@ func getRealBackend() (*ethclient.Client, *ecdsa.PrivateKey) {
 }
 
 func deploy(sk *ecdsa.PrivateKey, cl *ethclient.Client) (*IO, *DcallProxy, *CallProxy, *CcallProxy, *ScallProxy, error) {
-	txopts := bind.NewKeyedTransactor(sk)
+	txopts, err := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(3))
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
 	// IO
 	_, tx, io, err := DeployIO(txopts, cl)
 	if err != nil {
@@ -203,14 +240,42 @@ func txToAccessListTx(sk *ecdsa.PrivateKey, cl *ethclient.Client, tx *types.Tran
 	if err != nil {
 		return nil, err
 	}
+
+	sender := common.HexToAddress(ADDR)
+	nonce, err := cl.PendingNonceAt(context.Background(), sender)
+	if err != nil {
+		panic(err)
+	}
+
+	value := tx.Value()
+	if value.Cmp(new(big.Int).Mul(big.NewInt(1), big.NewInt(params.Ether))) > 0 {
+		value = big.NewInt(0)
+	}
 	// create proper accesslist transaction
 	var newTx *types.Transaction
 	if tx.To() == nil {
-		newTx = types.NewAccessListContractCreation(chainid, tx.Nonce(), tx.Value(), tx.Gas(), tx.GasPrice(), tx.Data(), list)
+		rawTx := types.AccessListTx{
+			ChainID:    chainid,
+			Nonce:      nonce,
+			Value:      value,
+			Gas:        tx.Gas(),
+			GasPrice:   tx.GasPrice(),
+			Data:       tx.Data(),
+			AccessList: *list}
+		newTx = types.NewTx(&rawTx)
 	} else {
-		newTx = types.NewAccessListTransaction(chainid, tx.Nonce(), *tx.To(), tx.Value(), tx.Gas(), tx.GasPrice(), tx.Data(), list)
+		rawTx := types.AccessListTx{
+			ChainID:    chainid,
+			Nonce:      nonce,
+			Value:      value,
+			To:         tx.To(),
+			Gas:        tx.Gas(),
+			GasPrice:   tx.GasPrice(),
+			Data:       tx.Data(),
+			AccessList: *list}
+		newTx = types.NewTx(&rawTx)
 	}
-	return types.SignTx(newTx, types.NewEIP2718Signer(chainid), sk)
+	return types.SignTx(newTx, types.NewEIP2930Signer(chainid), sk)
 }
 
 func generateTestChain(testBalance *big.Int, testAddr common.Address, dest common.Address, code []byte) *core.Genesis {
@@ -231,34 +296,34 @@ func mutateAccessList(list types.AccessList) *types.AccessList {
 		return &list
 	case 1:
 		// delete the access list
-		return nil
+		return &types.AccessList{}
 	case 2:
 		// empty the access list
 		return &types.AccessList{}
 	case 3:
 		// add a random entry and random slots to the list
 		addr := randomAddress()
-		keys := []*common.Hash{}
+		keys := []common.Hash{}
 		for i := 0; i < rand.Intn(10); i++ {
 			h := randomHash()
-			keys = append(keys, &h)
+			keys = append(keys, h)
 		}
-		tuple := types.AccessTuple{Address: &addr, StorageKeys: keys}
+		tuple := types.AccessTuple{Address: addr, StorageKeys: keys}
 		newList := types.AccessList(append([]types.AccessTuple{tuple}, list...))
 		return &newList
 	case 4:
 		// replace a random entry and random slots of it in the list
 		slot := list[rand.Int31n(int32(len(list)))]
 		addr := randomAddress()
-		keys := []*common.Hash{}
+		keys := []common.Hash{}
 		if len(slot.StorageKeys) == 0 {
 			break
 		}
 		for i := 0; i < rand.Intn(len(slot.StorageKeys)); i++ {
 			h := randomHash()
-			keys = append(keys, &h)
+			keys = append(keys, h)
 		}
-		tuple := types.AccessTuple{Address: &addr, StorageKeys: keys}
+		tuple := types.AccessTuple{Address: addr, StorageKeys: keys}
 		newList := types.AccessList(append([]types.AccessTuple{tuple}, list...))
 		return &newList
 	case 5:
@@ -266,18 +331,18 @@ func mutateAccessList(list types.AccessList) *types.AccessList {
 		keyIdx := rand.Int31n(int32(len(list)))
 		slotIdx := rand.Int31n(int32(len(list[keyIdx].StorageKeys)))
 		h := randomHash()
-		list[keyIdx].StorageKeys[slotIdx] = &h
+		list[keyIdx].StorageKeys[slotIdx] = h
 	case 6:
 		var accesslist []types.AccessTuple
 		for i := 0; i < rand.Int(); i++ {
 			addr := randomAddress()
-			keys := []*common.Hash{}
+			keys := []common.Hash{}
 			// create a fully random access list
 			for q := 0; q < rand.Int(); q++ {
 				h := randomHash()
-				keys = append(keys, &h)
+				keys = append(keys, h)
 			}
-			tuple := types.AccessTuple{Address: &addr, StorageKeys: keys}
+			tuple := types.AccessTuple{Address: addr, StorageKeys: keys}
 			accesslist = append(accesslist, tuple)
 		}
 		newList := types.AccessList(accesslist)

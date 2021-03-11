@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"io/ioutil"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
@@ -17,8 +20,22 @@ var (
 )
 
 func main() {
-
-	getRealBackend()
+	cl, sk := getRealBackend()
+	fakeTx := types.NewTransaction(1, common.HexToAddress(ADDR), big.NewInt(0), 21000, big.NewInt(1), nil)
+	noneip, err := types.SignTx(fakeTx, types.HomesteadSigner{}, sk)
+	if err != nil {
+		panic(err)
+	}
+	if err := cl.SendTransaction(context.Background(), noneip); err != nil {
+		fmt.Println(err) // Prints "only replay-protected (EIP-155) transactions allowed over RPC"
+	}
+	eip155, err := types.SignTx(fakeTx, types.NewEIP155Signer(big.NewInt(1337)), sk)
+	if err != nil {
+		panic(err)
+	}
+	if err := cl.SendTransaction(context.Background(), eip155); err != nil {
+		panic(err)
+	}
 }
 
 func getRealBackend() (*ethclient.Client, *ecdsa.PrivateKey) {
@@ -28,7 +45,7 @@ func getRealBackend() (*ethclient.Client, *ecdsa.PrivateKey) {
 	if crypto.PubkeyToAddress(sk.PublicKey).Hex() != ADDR {
 		panic(fmt.Sprintf("wrong address want %s got %s", crypto.PubkeyToAddress(sk.PublicKey).Hex(), ADDR))
 	}
-	cl, err := ethclient.Dial("/home/matematik/.yolo2/geth.ipc")
+	cl, err := ethclient.Dial("/tmp/geth.ipc")
 	if err != nil {
 		panic(err)
 	}
