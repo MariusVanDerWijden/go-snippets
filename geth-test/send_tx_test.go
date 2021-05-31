@@ -48,10 +48,10 @@ func TestTransfer(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	value := big.NewInt(10000)
+	value := big.NewInt(1000000000000000)
 	gasLimit := uint64(21000)
 	// Set gas price to 18 gwei
-	gasPrice := big.NewInt(18400001459)
+	gasPrice := big.NewInt(184000014590)
 	fmt.Println(int64(gasLimit)*gasPrice.Int64() + value.Int64())
 	toAddress := fromAddress
 	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, nil)
@@ -80,4 +80,5 @@ func TestTransfer(t *testing.T) {
 	if rec.Status != types.ReceiptStatusSuccessful {
 		panic("tx failed")
 	}
+	panic("success")
 }

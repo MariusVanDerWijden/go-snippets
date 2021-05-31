@@ -22,7 +22,7 @@ func main() {
 
 }
 
-func getSimBackend() (*backends.SimulatedBackend, *ecdsa.PrivateKey) {
+func GetSimBackend() (*backends.SimulatedBackend, *ecdsa.PrivateKey) {
 	sk, err := crypto.GenerateKey()
 	if err != nil {
 		panic(err)

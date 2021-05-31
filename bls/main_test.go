@@ -89,7 +89,7 @@ func TestMulG2Live(t *testing.T) {
 	}
 
 	iv := []byte{1, 2, 3}
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 		for k := 0; k < 100; k++ {
 			input := NewG2Point(iv, config)
 			mul := make([]byte, 32)
@@ -105,10 +105,8 @@ func TestMulG2Live(t *testing.T) {
 			t.Log(b)
 		}
 	}
+}*/
 
-	panic(err)
-}
-*/
 func TestMulExpG1Live(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
 	defer cancel()
@@ -127,8 +125,8 @@ func TestMulExpG1Live(t *testing.T) {
 	_ = rand.Int()
 
 	iv := []byte{1, 2, 3, 4}
-	for i := 0; i < 1000; i++ {
-		for j := 0; j < 130; j++ {
+	for i := 0; i < 100; i++ {
+		for j := 0; j < 100; j++ {
 			var in []byte
 			for k := 0; k < j; k++ {
 				input := NewG1Point(iv, config)
@@ -147,8 +145,6 @@ func TestMulExpG1Live(t *testing.T) {
 			t.Log(b)
 		}
 	}
-
-	panic(err)
 }
 
 func TestMulG1Live(t *testing.T) {
@@ -168,7 +164,7 @@ func TestMulG1Live(t *testing.T) {
 	}
 
 	iv := []byte{1, 2, 3}
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 		for k := 0; k < 100; k++ {
 			input := NewG1Point(iv, config)
 			mul := make([]byte, 32)
@@ -184,8 +180,6 @@ func TestMulG1Live(t *testing.T) {
 			t.Log(b)
 		}
 	}
-
-	panic(err)
 }
 
 func TestAddG2Live(t *testing.T) {
@@ -220,8 +214,6 @@ func TestAddG2Live(t *testing.T) {
 			t.Log(b)
 		}
 	}
-
-	panic(err)
 }
 
 func TestAddLive(t *testing.T) {
@@ -241,7 +233,7 @@ func TestAddLive(t *testing.T) {
 	}
 
 	iv := []byte{1, 2, 3}
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 100; i++ {
 		for k := 0; k < 100; k++ {
 			input := NewG1Point(iv, config)
 			input2 := NewG1Point(iv, config)
@@ -256,6 +248,4 @@ func TestAddLive(t *testing.T) {
 			t.Log(b)
 		}
 	}
-
-	panic(err)
 }

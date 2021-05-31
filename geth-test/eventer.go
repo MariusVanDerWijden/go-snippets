@@ -185,7 +185,7 @@ func bindArray(address common.Address, caller bind.ContractCaller, transactor bi
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Array *ArrayRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Array *ArrayRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Array.Contract.ArrayCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -204,7 +204,7 @@ func (_Array *ArrayRaw) Transact(opts *bind.TransactOpts, method string, params 
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Array *ArrayCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Array *ArrayCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Array.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -223,12 +223,17 @@ func (_Array *ArrayTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 //
 // Solidity: function get_array() pure returns(uint8[2][4])
 func (_Array *ArrayCaller) GetArray(opts *bind.CallOpts) ([4][2]uint8, error) {
-	var (
-		ret0 = new([4][2]uint8)
-	)
-	out := ret0
-	err := _Array.contract.Call(opts, out, "get_array")
-	return *ret0, err
+	var out []interface{}
+	err := _Array.contract.Call(opts, &out, "get_array")
+
+	if err != nil {
+		return *new([4][2]uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([4][2]uint8)).(*[4][2]uint8)
+
+	return out0, err
+
 }
 
 // GetArray is a free data retrieval call binding the contract method 0xc75d70ed.
@@ -379,7 +384,7 @@ func bindBigBoard(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_BigBoard *BigBoardRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_BigBoard *BigBoardRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _BigBoard.Contract.BigBoardCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -398,7 +403,7 @@ func (_BigBoard *BigBoardRaw) Transact(opts *bind.TransactOpts, method string, p
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_BigBoard *BigBoardCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_BigBoard *BigBoardCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _BigBoard.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -417,12 +422,17 @@ func (_BigBoard *BigBoardTransactorRaw) Transact(opts *bind.TransactOpts, method
 //
 // Solidity: function get_board_state() view returns(uint8[9][10][3])
 func (_BigBoard *BigBoardCaller) GetBoardState(opts *bind.CallOpts) ([3][10][9]uint8, error) {
-	var (
-		ret0 = new([3][10][9]uint8)
-	)
-	out := ret0
-	err := _BigBoard.contract.Call(opts, out, "get_board_state")
-	return *ret0, err
+	var out []interface{}
+	err := _BigBoard.contract.Call(opts, &out, "get_board_state")
+
+	if err != nil {
+		return *new([3][10][9]uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([3][10][9]uint8)).(*[3][10][9]uint8)
+
+	return out0, err
+
 }
 
 // GetBoardState is a free data retrieval call binding the contract method 0x810851a8.
@@ -595,7 +605,7 @@ func bindEventer(address common.Address, caller bind.ContractCaller, transactor 
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Eventer *EventerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Eventer *EventerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Eventer.Contract.EventerCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -614,7 +624,7 @@ func (_Eventer *EventerRaw) Transact(opts *bind.TransactOpts, method string, par
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Eventer *EventerCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Eventer *EventerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Eventer.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -1106,7 +1116,7 @@ func bindReceiveFallback(address common.Address, caller bind.ContractCaller, tra
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ReceiveFallback *ReceiveFallbackRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_ReceiveFallback *ReceiveFallbackRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ReceiveFallback.Contract.ReceiveFallbackCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -1125,7 +1135,7 @@ func (_ReceiveFallback *ReceiveFallbackRaw) Transact(opts *bind.TransactOpts, me
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ReceiveFallback *ReceiveFallbackCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_ReceiveFallback *ReceiveFallbackCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ReceiveFallback.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -1582,7 +1592,7 @@ func bindTupleTest(address common.Address, caller bind.ContractCaller, transacto
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TupleTest *TupleTestRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TupleTest *TupleTestRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TupleTest.Contract.TupleTestCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -1601,7 +1611,7 @@ func (_TupleTest *TupleTestRaw) Transact(opts *bind.TransactOpts, method string,
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TupleTest *TupleTestCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TupleTest *TupleTestCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TupleTest.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -1620,18 +1630,19 @@ func (_TupleTest *TupleTestTransactorRaw) Transact(opts *bind.TransactOpts, meth
 //
 // Solidity: function g() pure returns((uint256,uint256[],(uint256,uint256)[]), (uint256,uint256), uint256)
 func (_TupleTest *TupleTestCaller) G(opts *bind.CallOpts) (TupleTestS, T, *big.Int, error) {
-	var (
-		ret0 = new(TupleTestS)
-		ret1 = new(T)
-		ret2 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+	var out []interface{}
+	err := _TupleTest.contract.Call(opts, &out, "g")
+
+	if err != nil {
+		return *new(TupleTestS), *new(T), *new(*big.Int), err
 	}
-	err := _TupleTest.contract.Call(opts, out, "g")
-	return *ret0, *ret1, *ret2, err
+
+	out0 := *abi.ConvertType(out[0], new(TupleTestS)).(*TupleTestS)
+	out1 := *abi.ConvertType(out[1], new(T)).(*T)
+	out2 := *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+
+	return out0, out1, out2, err
+
 }
 
 // G is a free data retrieval call binding the contract method 0xe2179b8e.
@@ -1941,7 +1952,7 @@ func bindTupleTest2(address common.Address, caller bind.ContractCaller, transact
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TupleTest2 *TupleTest2Raw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TupleTest2 *TupleTest2Raw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TupleTest2.Contract.TupleTest2Caller.contract.Call(opts, result, method, params...)
 }
 
@@ -1960,7 +1971,7 @@ func (_TupleTest2 *TupleTest2Raw) Transact(opts *bind.TransactOpts, method strin
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_TupleTest2 *TupleTest2CallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_TupleTest2 *TupleTest2CallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _TupleTest2.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -1979,12 +1990,17 @@ func (_TupleTest2 *TupleTest2TransactorRaw) Transact(opts *bind.TransactOpts, me
 //
 // Solidity: function a((uint256,uint256) t) view returns((uint256,uint256))
 func (_TupleTest2 *TupleTest2Caller) A(opts *bind.CallOpts, t T) (T, error) {
-	var (
-		ret0 = new(T)
-	)
-	out := ret0
-	err := _TupleTest2.contract.Call(opts, out, "a", t)
-	return *ret0, err
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "a", t)
+
+	if err != nil {
+		return *new(T), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(T)).(*T)
+
+	return out0, err
+
 }
 
 // A is a free data retrieval call binding the contract method 0x7705ed20.
@@ -2005,12 +2021,17 @@ func (_TupleTest2 *TupleTest2CallerSession) A(t T) (T, error) {
 //
 // Solidity: function b((uint256,uint256)[] t) view returns((uint256,uint256)[])
 func (_TupleTest2 *TupleTest2Caller) B(opts *bind.CallOpts, t []T) ([]T, error) {
-	var (
-		ret0 = new([]T)
-	)
-	out := ret0
-	err := _TupleTest2.contract.Call(opts, out, "b", t)
-	return *ret0, err
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "b", t)
+
+	if err != nil {
+		return *new([]T), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]T)).(*[]T)
+
+	return out0, err
+
 }
 
 // B is a free data retrieval call binding the contract method 0x9346002a.
@@ -2031,10 +2052,15 @@ func (_TupleTest2 *TupleTest2CallerSession) B(t []T) ([]T, error) {
 //
 // Solidity: function f((uint256,uint256[],(uint256,uint256)[]) s, (uint256,uint256) t, uint256 u) view returns()
 func (_TupleTest2 *TupleTest2Caller) F(opts *bind.CallOpts, s TupleTest2S, t T, u *big.Int) error {
-	var ()
-	out := &[]interface{}{}
-	err := _TupleTest2.contract.Call(opts, out, "f", s, t, u)
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "f", s, t, u)
+
+	if err != nil {
+		return err
+	}
+
 	return err
+
 }
 
 // F is a free data retrieval call binding the contract method 0x6f2be728.
@@ -2055,18 +2081,19 @@ func (_TupleTest2 *TupleTest2CallerSession) F(s TupleTest2S, t T, u *big.Int) er
 //
 // Solidity: function g() view returns((uint256,uint256[],(uint256,uint256)[]), (uint256,uint256), uint256)
 func (_TupleTest2 *TupleTest2Caller) G(opts *bind.CallOpts) (TupleTest2S, T, *big.Int, error) {
-	var (
-		ret0 = new(TupleTest2S)
-		ret1 = new(T)
-		ret2 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "g")
+
+	if err != nil {
+		return *new(TupleTest2S), *new(T), *new(*big.Int), err
 	}
-	err := _TupleTest2.contract.Call(opts, out, "g")
-	return *ret0, *ret1, *ret2, err
+
+	out0 := *abi.ConvertType(out[0], new(TupleTest2S)).(*TupleTest2S)
+	out1 := *abi.ConvertType(out[1], new(T)).(*T)
+	out2 := *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+
+	return out0, out1, out2, err
+
 }
 
 // G is a free data retrieval call binding the contract method 0xe2179b8e.
@@ -2087,10 +2114,15 @@ func (_TupleTest2 *TupleTest2CallerSession) G() (TupleTest2S, T, *big.Int, error
 //
 // Solidity: function method((uint256,uint256[]) a, uint256 b) view returns()
 func (_TupleTest2 *TupleTest2Caller) Method(opts *bind.CallOpts, a TupleTest2A, b *big.Int) error {
-	var ()
-	out := &[]interface{}{}
-	err := _TupleTest2.contract.Call(opts, out, "method", a, b)
+	var out []interface{}
+	err := _TupleTest2.contract.Call(opts, &out, "method", a, b)
+
+	if err != nil {
+		return err
+	}
+
 	return err
+
 }
 
 // Method is a free data retrieval call binding the contract method 0xab41fe7a.
@@ -2375,7 +2407,7 @@ func bindVoidTest(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_VoidTest *VoidTestRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_VoidTest *VoidTestRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _VoidTest.Contract.VoidTestCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -2394,7 +2426,7 @@ func (_VoidTest *VoidTestRaw) Transact(opts *bind.TransactOpts, method string, p
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_VoidTest *VoidTestCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_VoidTest *VoidTestCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _VoidTest.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -2413,10 +2445,15 @@ func (_VoidTest *VoidTestTransactorRaw) Transact(opts *bind.TransactOpts, method
 //
 // Solidity: function method(uint256 a) view returns()
 func (_VoidTest *VoidTestCaller) Method(opts *bind.CallOpts, a *big.Int) error {
-	var ()
-	out := &[]interface{}{}
-	err := _VoidTest.contract.Call(opts, out, "method", a)
+	var out []interface{}
+	err := _VoidTest.contract.Call(opts, &out, "method", a)
+
+	if err != nil {
+		return err
+	}
+
 	return err
+
 }
 
 // Method is a free data retrieval call binding the contract method 0x9a40e3f6.

@@ -159,7 +159,7 @@ func bindCallBLS(address common.Address, caller bind.ContractCaller, transactor 
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_CallBLS *CallBLSRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_CallBLS *CallBLSRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _CallBLS.Contract.CallBLSCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -178,7 +178,7 @@ func (_CallBLS *CallBLSRaw) Transact(opts *bind.TransactOpts, method string, par
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_CallBLS *CallBLSCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_CallBLS *CallBLSCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _CallBLS.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -614,7 +614,7 @@ func bindEIP2537Caller(address common.Address, caller bind.ContractCaller, trans
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_EIP2537Caller *EIP2537CallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_EIP2537Caller *EIP2537CallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _EIP2537Caller.Contract.EIP2537CallerCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -633,7 +633,7 @@ func (_EIP2537Caller *EIP2537CallerRaw) Transact(opts *bind.TransactOpts, method
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_EIP2537Caller *EIP2537CallerCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_EIP2537Caller *EIP2537CallerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _EIP2537Caller.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -652,12 +652,17 @@ func (_EIP2537Caller *EIP2537CallerTransactorRaw) Transact(opts *bind.TransactOp
 //
 // Solidity: function last_success() view returns(bool)
 func (_EIP2537Caller *EIP2537CallerCaller) LastSuccess(opts *bind.CallOpts) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _EIP2537Caller.contract.Call(opts, out, "last_success")
-	return *ret0, err
+	var out []interface{}
+	err := _EIP2537Caller.contract.Call(opts, &out, "last_success")
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
 }
 
 // LastSuccess is a free data retrieval call binding the contract method 0x3de94ad2.
