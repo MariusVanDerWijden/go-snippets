@@ -9,7 +9,8 @@ import (
 )
 
 func TestBaikal(t *testing.T) {
-	SendBaikalTransactions(100)
+	backend, key := getRealBackend()
+	SendBaikalTransactions(backend, key, 100)
 }
 
 func TestUnstuck(t *testing.T) {

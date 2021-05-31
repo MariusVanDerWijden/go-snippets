@@ -2,17 +2,35 @@ package main
 
 import (
 	"context"
+	"crypto/ecdsa"
 	crand "crypto/rand"
+	"fmt"
 	"math/big"
 
 	"github.com/MariusVanDerWijden/FuzzyVM/filler"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
 )
 
-func SendBaikalTransactions(N int) {
-	backend, key := getRealBackend()
+func BigBaikalTest(N int) {
+	// Each account should send N transactions, prefund them enough eth
+	value := new(big.Int).Mul(big.NewInt(int64(N*1000)), big.NewInt(params.GWei))
+	airdrop(value)
+	backend, _ := getRealBackend()
+	// Now let everyone spam baikal transactions
+	for _, key := range keys {
+		go func(key string) {
+			sk := crypto.ToECDSAUnsafe(common.FromHex(SK))
+			SendBaikalTransactions(backend, sk, N)
+		}(key)
+	}
+}
+
+func SendBaikalTransactions(backend *ethclient.Client, key *ecdsa.PrivateKey, N int) {
 
 	rnd := make([]byte, 10000)
 	crand.Read(rnd)
@@ -40,6 +58,10 @@ func SendBaikalTransactions(N int) {
 		err = backend.SendTransaction(context.Background(), signedTx)
 		if err == nil {
 			nonce++
+		}
+
+		if _, err := bind.WaitMined(context.Background(), backend, signedTx); err != nil {
+			fmt.Printf("Wait mined failed: %v\n", err.Error())
 		}
 	}
 }
