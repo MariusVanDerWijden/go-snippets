@@ -16,7 +16,7 @@ import (
 )
 
 func fundSender(sender common.Address, sk *ecdsa.PrivateKey, client *backends.SimulatedBackend) {
-	txfund := types.NewTransaction(0, sender, big.NewInt(11000000000000000), 21000, big.NewInt(1), nil)
+	txfund := types.NewTransaction(0, sender, big.NewInt(11000000000000000), 21000, big.NewInt(10000000000), nil)
 
 	chainID := big.NewInt(1337)
 	privateKey := sk
@@ -33,7 +33,7 @@ func fundSender(sender common.Address, sk *ecdsa.PrivateKey, client *backends.Si
 
 func TestTransfer(t *testing.T) {
 
-	client, faucetSK := getSimBackend()
+	client, faucetSK := GetSimBackend()
 	// Create a new sender address
 	sk, err := crypto.GenerateKey()
 	if err != nil {
@@ -80,5 +80,4 @@ func TestTransfer(t *testing.T) {
 	if rec.Status != types.ReceiptStatusSuccessful {
 		panic("tx failed")
 	}
-	panic("success")
 }

@@ -2,6 +2,7 @@ package geth
 
 import (
 	"context"
+	"math/big"
 	"testing"
 	"time"
 
@@ -15,8 +16,8 @@ import (
 func TestNegativeEvent(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	backend, sk := getSimBackend()
-	transactor := bind.NewKeyedTransactor(sk)
+	backend, sk := GetSimBackend()
+	transactor, _ := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(1337))
 	_, _, eventer, err := DeployEventer(transactor, backend)
 	assert.NoError(t, err)
 
@@ -41,16 +42,15 @@ func TestNegativeEvent(t *testing.T) {
 		t.Log(iter.Event.Out2)
 		t.Log(iter.Event.Raw)
 		t.Log(iter.Next())
-		t.Error("Successful if it hits this error")
 	}
-	t.Error("Unsuccessful")
+	assert.NoError(t, iter.Error())
 }
 
 func TestAnonymousEvent(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	backend, sk := getSimBackend()
-	transactor := bind.NewKeyedTransactor(sk)
+	backend, sk := GetSimBackend()
+	transactor, _ := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(1337))
 	_, _, eventer, err := DeployEventer(transactor, backend)
 	assert.NoError(t, err)
 
@@ -75,28 +75,21 @@ func TestAnonymousEvent(t *testing.T) {
 		t.Log(iter.Event.Arg1)
 		t.Log(iter.Event.Raw)
 		t.Log(iter.Next())
-		t.Error("Successful if it hits this error")
 	}
-	t.Error(iter.Error())
-	t.Error("Unsuccessful")
+	assert.NoError(t, iter.Error())
 }
 
 func TestFail(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	backend, sk := getSimBackend()
-	transactor := bind.NewKeyedTransactor(sk)
+	backend, sk := GetSimBackend()
+	transactor, _ := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(1337))
 	_, _, eventer, err := DeployEventer(transactor, backend)
 	assert.NoError(t, err)
 
-	tx, err := eventer.Fail(transactor)
-	require.NoError(t, err)
-	receipt, err := bind.WaitMined(ctx, backend, tx)
-	assert.NoError(t, err)
-	assert.True(t, receipt.Status != types.ReceiptStatusFailed)
+	_, err = eventer.Fail(transactor)
+	require.Error(t, err)
 }
 
 func TestKey(t *testing.T) {
 	sk, pk := genKey()
-	assert.Equal(t, common.ToHex(sk), common.ToHex(pk))
+	assert.Equal(t, common.Bytes2Hex(sk), common.Bytes2Hex(pk))
 }

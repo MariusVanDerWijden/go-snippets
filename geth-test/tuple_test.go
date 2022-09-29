@@ -14,8 +14,8 @@ import (
 func TestTuple(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	backend, sk := getSimBackend()
-	transactor := bind.NewKeyedTransactor(sk)
+	backend, sk := GetSimBackend()
+	transactor, _ := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(1337))
 	_, _, contract, err := DeployTupleTest(transactor, backend)
 	backend.Commit()
 	assert.NoError(t, err)
@@ -41,5 +41,4 @@ func TestTuple(t *testing.T) {
 	t.Log(iterF.Event.Arg0)
 	t.Log(iterF.Event.Arg1)
 	t.Log(iterF.Event.Arg2)
-	t.Fatal("Successful")
 }
