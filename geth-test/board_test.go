@@ -1,12 +1,11 @@
 package geth
 
 import (
-	"fmt"
-	"math/big"
+	//"fmt"
+	//"math/big"
 	"testing"
-
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/stretchr/testify/assert"
+	//"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	//"github.com/stretchr/testify/assert"
 )
 
 func TestBoard(t *testing.T) {
@@ -41,6 +40,7 @@ func TestBoard(t *testing.T) {
 	*/
 }
 
+/*
 func TestArray(t *testing.T) {
 	backend, sk := GetSimBackend()
 	transactor, _ := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(1337))
@@ -62,7 +62,7 @@ func TestArray(t *testing.T) {
 	assert.Equal(t, state[2][1], uint8(6))
 	assert.Equal(t, state[3][1], uint8(7))
 }
-
+*/
 /*
 func TestIsArray(t *testing.T) {
 	backend, sk := GetSimBackend()

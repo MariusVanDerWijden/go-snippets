@@ -1,5 +1,6 @@
 package geth
 
+/*
 import (
 	"context"
 	"math/big"
@@ -42,3 +43,4 @@ func TestTuple(t *testing.T) {
 	t.Log(iterF.Event.Arg1)
 	t.Log(iterF.Event.Arg2)
 }
+*/

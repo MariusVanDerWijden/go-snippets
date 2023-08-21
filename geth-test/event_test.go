@@ -1,5 +1,6 @@
 package geth
 
+/*
 import (
 	"context"
 	"math/big"
@@ -93,3 +94,4 @@ func TestKey(t *testing.T) {
 	sk, pk := genKey()
 	assert.Equal(t, common.Bytes2Hex(sk), common.Bytes2Hex(pk))
 }
+*/

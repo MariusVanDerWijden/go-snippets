@@ -19,6 +19,7 @@ func main() {
 
 	ttd, _ := new(big.Int).SetString(ttdString, 0)
 	//https://mainnet.infura.io/v3/a1743f084f8a46bfb3696389eeb9f217
+	//client, err := rpc.Dial("https://sepolia.infura.io/v3/a1743f084f8a46bfb3696389eeb9f217")
 	client, err := rpc.Dial("/mnt/ethereum/geth.ipc")
 	if err != nil {
 		panic(err)

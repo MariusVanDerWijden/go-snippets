@@ -7,9 +7,21 @@
 
 # Test binary, built with `go test -c`
 *.test
-
+*.abi
+*.bin
+*.zip
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+12phraserecover/12phraserecover
+badblockdiff/badblockdiff
+blockdump/blockdump
+bls/bls
+blst/blst
+gethshutdown/gethshutdown
+livefuzzer/livefuzzer
+txdump/txdump
+yolov3-livefuzzer/yolov3-livefuzzer
+snappy_fuzz/corpus/
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

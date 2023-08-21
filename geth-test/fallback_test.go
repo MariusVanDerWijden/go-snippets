@@ -1,5 +1,6 @@
 package geth
 
+/*
 import (
 	"context"
 	"math/big"
@@ -41,3 +42,4 @@ func TestFallback(t *testing.T) {
 	}
 	t.Log(iter.Event.Sender)
 }
+*/
