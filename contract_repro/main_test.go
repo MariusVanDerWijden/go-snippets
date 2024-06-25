@@ -1,11 +1,14 @@
 package geth
 
 import (
+	"context"
 	"crypto/ecdsa"
+	"fmt"
 	"math/big"
 	"testing"
 	"time"
 
+	"github.com/MariusVanDerWijden/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
 	"github.com/ethereum/go-ethereum/common"
@@ -15,28 +18,39 @@ import (
 )
 
 func TestTellor(t *testing.T) {
-	backend, sk := getSimBackend()
-	transactor := bind.NewKeyedTransactor(sk)
-	_, tx, contract, err := DeployReverter(transactor, backend)
+	backend, sk := getRealBackend()
+	transactor, err := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(1337))
 	if err != nil {
-		t.Fail()
+		t.Fatal(err)
 	}
-	backend.Commit()
+	_, tx, _, err := DeployERC20(transactor, backend)
+	if err != nil {
+		t.Fatal(err)
+	}
 	ctx, _ := context.WithDeadline(context.Background(), time.Now().Add(5*time.Second))
 	addr, err := bind.WaitDeployed(ctx, backend, tx)
 	if err != nil {
 		t.Error(err)
 	}
 	_ = addr
-	tx, err = contract.Revert(transactor)
+}
+
+func TestTellor(t *testing.T) {
+	backend, sk := getSimBackend()
+	transactor, err := bind.NewKeyedTransactorWithChainID(sk, big.NewInt(1337))
+	if err != nil {
+		t.Fatal(err)
+	}
+	supply := big.NewInt(1000)
+	_, tx, _, err := DeploySmallContract(transactor, backend, supply)
+	if err != nil {
+		t.Fatal(err)
+	}
+	addr, err := bind.WaitDeployed(context.Background(), backend, tx)
 	if err != nil {
 		t.Error(err)
 	}
-	rec, err := bind.WaitMined(context.Background(), backend, tx)
-	if err != nil {
-		t.Error(err)
-	}
-	_ = rec
+	_ = addr
 }
 
 var (
@@ -51,16 +65,22 @@ func getSimBackend() (*backends.SimulatedBackend, *ecdsa.PrivateKey) {
 	}
 	faucetAddr := crypto.PubkeyToAddress(sk.PublicKey)
 	addr := map[common.Address]core.GenesisAccount{
-		common.BytesToAddress([]byte{1}): {Balance: big.NewInt(1)}, // ECRecover
-		common.BytesToAddress([]byte{2}): {Balance: big.NewInt(1)}, // SHA256
-		common.BytesToAddress([]byte{3}): {Balance: big.NewInt(1)}, // RIPEMD
-		common.BytesToAddress([]byte{4}): {Balance: big.NewInt(1)}, // Identity
-		common.BytesToAddress([]byte{5}): {Balance: big.NewInt(1)}, // ModExp
-		common.BytesToAddress([]byte{6}): {Balance: big.NewInt(1)}, // ECAdd
-		common.BytesToAddress([]byte{7}): {Balance: big.NewInt(1)}, // ECScalarMul
-		common.BytesToAddress([]byte{8}): {Balance: big.NewInt(1)}, // ECPairing
-		faucetAddr:                       {Balance: new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(9))},
+		faucetAddr: {Balance: new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(9))},
 	}
 	alloc := core.GenesisAlloc(addr)
 	return backends.NewSimulatedBackend(alloc, 80000000), sk
+}
+
+func getRealBackend() (*ethclient.Client, *ecdsa.PrivateKey) {
+	// eth.sendTransaction({from:personal.listAccounts[0], to:"0xb02A2EdA1b317FBd16760128836B0Ac59B560e9D", value: "100000000000000"})
+
+	sk := crypto.ToECDSAUnsafe(common.FromHex(SK))
+	if crypto.PubkeyToAddress(sk.PublicKey).Hex() != ADDR {
+		panic(fmt.Sprintf("wrong address want %s got %s", crypto.PubkeyToAddress(sk.PublicKey).Hex(), ADDR))
+	}
+	cl, err := ethclient.Dial("http://127.0.0.1:8545")
+	if err != nil {
+		panic(err)
+	}
+	return cl, sk
 }

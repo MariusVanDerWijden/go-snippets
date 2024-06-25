@@ -6,6 +6,7 @@ import (
 	crand "crypto/rand"
 	"fmt"
 	"math/big"
+	"sync"
 
 	"github.com/MariusVanDerWijden/FuzzyVM/filler"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -18,25 +19,29 @@ import (
 
 func BigBaikalTest(N int) {
 	// Each account should send N transactions, prefund them enough eth
-	value := new(big.Int).Mul(big.NewInt(int64(N*1000)), big.NewInt(params.GWei))
-	airdrop(value)
+	//value := new(big.Int).Mul(big.NewInt(int64(N*1000)), big.NewInt(params.GWei))
+	//airdrop(value)
 	backend, _ := getRealBackend()
 	// Now let everyone spam baikal transactions
-	for _, key := range keys {
-		go func(key string) {
-			sk := crypto.ToECDSAUnsafe(common.FromHex(SK))
-			SendBaikalTransactions(backend, sk, N)
-		}(key)
+	var wg sync.WaitGroup
+	wg.Add(len(keys))
+	for i, key := range keys {
+		go func(key, addr string) {
+			sk := crypto.ToECDSAUnsafe(common.FromHex(key))
+			SendBaikalTransactions(backend, sk, addr, N)
+			wg.Done()
+		}(key, addrs[i])
 	}
+	wg.Wait()
 }
 
-func SendBaikalTransactions(backend *ethclient.Client, key *ecdsa.PrivateKey, N int) {
+func SendBaikalTransactions(backend *ethclient.Client, key *ecdsa.PrivateKey, addr string, N int) {
 
 	rnd := make([]byte, 10000)
 	crand.Read(rnd)
 	f := filler.NewFiller(rnd)
 
-	sender := common.HexToAddress(ADDR)
+	sender := common.HexToAddress(addr)
 	chainid, err := backend.ChainID(context.Background())
 	if err != nil {
 		panic(err)

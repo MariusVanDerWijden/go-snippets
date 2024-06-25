@@ -840,7 +840,6 @@ func (z nat) divRecursive(u, v nat) {
 // - the quotient will overwrite z
 // - the remainder will overwrite u
 func (z nat) divRecursiveStep(u, v nat, depth int, tmp *nat, temps []*nat) {
-	u = u.norm()
 	v = v.norm()
 
 	if len(u) == 0 {

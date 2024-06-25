@@ -4,6 +4,7 @@
 package geth
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -26,129 +28,143 @@ var (
 	_ = event.NewSubscription
 )
 
-// ReverterABI is the input ABI used to generate the binding from.
-const ReverterABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"revert\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
-
-// ReverterFuncSigs maps the 4-byte function signature to its string representation.
-var ReverterFuncSigs = map[string]string{
-	"7da3c3ab": "revert()",
+// HelloMetaData contains all meta data concerning the Hello contract.
+var HelloMetaData = &bind.MetaData{
+	ABI: "[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_msg\",\"type\":\"string\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"getMsg\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_msg\",\"type\":\"string\"}],\"name\":\"setMsg\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	Sigs: map[string]string{
+		"b5fdeb23": "getMsg()",
+		"c4784fd4": "setMsg(string)",
+	},
+	Bin: "0x608060405234801561001057600080fd5b5060405161054e38038061054e83398101604081905261002f916100e2565b8051610042906000906020840190610049565b5050610202565b828054610055906101b1565b90600052602060002090601f01602090048101928261007757600085556100bd565b82601f1061009057805160ff19168380011785556100bd565b828001600101855582156100bd579182015b828111156100bd5782518255916020019190600101906100a2565b506100c99291506100cd565b5090565b5b808211156100c957600081556001016100ce565b600060208083850312156100f557600080fd5b82516001600160401b038082111561010c57600080fd5b818501915085601f83011261012057600080fd5b815181811115610132576101326101ec565b604051601f8201601f19908116603f0116810190838211818310171561015a5761015a6101ec565b81604052828152888684870101111561017257600080fd5b600093505b828410156101945784840186015181850187015292850192610177565b828411156101a55760008684830101525b98975050505050505050565b600181811c908216806101c557607f821691505b602082108114156101e657634e487b7160e01b600052602260045260246000fd5b50919050565b634e487b7160e01b600052604160045260246000fd5b61033d806102116000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063b5fdeb231461003b578063c4784fd414610059575b600080fd5b61004361006e565b6040516100509190610261565b60405180910390f35b61006c6100673660046101b0565b610100565b005b60606000805461007d906102b6565b80601f01602080910402602001604051908101604052809291908181526020018280546100a9906102b6565b80156100f65780601f106100cb576101008083540402835291602001916100f6565b820191906000526020600020905b8154815290600101906020018083116100d957829003601f168201915b5050505050905090565b8051610113906000906020840190610117565b5050565b828054610123906102b6565b90600052602060002090601f016020900481019282610145576000855561018b565b82601f1061015e57805160ff191683800117855561018b565b8280016001018555821561018b579182015b8281111561018b578251825591602001919060010190610170565b5061019792915061019b565b5090565b5b80821115610197576000815560010161019c565b6000602082840312156101c257600080fd5b813567ffffffffffffffff808211156101da57600080fd5b818401915084601f8301126101ee57600080fd5b813581811115610200576102006102f1565b604051601f8201601f19908116603f01168101908382118183101715610228576102286102f1565b8160405282815287602084870101111561024157600080fd5b826020860160208301376000928101602001929092525095945050505050565b600060208083528351808285015260005b8181101561028e57858101830151858201604001528201610272565b818111156102a0576000604083870101525b50601f01601f1916929092016040019392505050565b600181811c908216806102ca57607f821691505b602082108114156102eb57634e487b7160e01b600052602260045260246000fd5b50919050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220e2b115cd38ec93b818000188628b87fcd8722ecdbb74c5d885257a0a3baf0afb64736f6c63430008060033",
 }
 
-// ReverterBin is the compiled bytecode used for deploying new contracts.
-var ReverterBin = "0x6080604052348015600f57600080fd5b5060ab8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80637da3c3ab14602d575b600080fd5b60336035565b005b6040805162461bcd60e51b815260206004820152601160248201527072657665727420726561736f6e2031323360781b604482015290519081900360640190fdfea265627a7a72315820e8c3f899c32798b10b8d46594292b9e3d2271f011100fb17b6d3a6469f50c8c964736f6c63430005100032"
+// HelloABI is the input ABI used to generate the binding from.
+// Deprecated: Use HelloMetaData.ABI instead.
+var HelloABI = HelloMetaData.ABI
 
-// DeployReverter deploys a new Ethereum contract, binding an instance of Reverter to it.
-func DeployReverter(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Reverter, error) {
-	parsed, err := abi.JSON(strings.NewReader(ReverterABI))
+// Deprecated: Use HelloMetaData.Sigs instead.
+// HelloFuncSigs maps the 4-byte function signature to its string representation.
+var HelloFuncSigs = HelloMetaData.Sigs
+
+// HelloBin is the compiled bytecode used for deploying new contracts.
+// Deprecated: Use HelloMetaData.Bin instead.
+var HelloBin = HelloMetaData.Bin
+
+// DeployHello deploys a new Ethereum contract, binding an instance of Hello to it.
+func DeployHello(auth *bind.TransactOpts, backend bind.ContractBackend, _msg string) (common.Address, *types.Transaction, *Hello, error) {
+	parsed, err := HelloMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ReverterBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(HelloBin), backend, _msg)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	return address, tx, &Reverter{ReverterCaller: ReverterCaller{contract: contract}, ReverterTransactor: ReverterTransactor{contract: contract}, ReverterFilterer: ReverterFilterer{contract: contract}}, nil
+	return address, tx, &Hello{HelloCaller: HelloCaller{contract: contract}, HelloTransactor: HelloTransactor{contract: contract}, HelloFilterer: HelloFilterer{contract: contract}}, nil
 }
 
-// Reverter is an auto generated Go binding around an Ethereum contract.
-type Reverter struct {
-	ReverterCaller     // Read-only binding to the contract
-	ReverterTransactor // Write-only binding to the contract
-	ReverterFilterer   // Log filterer for contract events
+// Hello is an auto generated Go binding around an Ethereum contract.
+type Hello struct {
+	HelloCaller     // Read-only binding to the contract
+	HelloTransactor // Write-only binding to the contract
+	HelloFilterer   // Log filterer for contract events
 }
 
-// ReverterCaller is an auto generated read-only Go binding around an Ethereum contract.
-type ReverterCaller struct {
+// HelloCaller is an auto generated read-only Go binding around an Ethereum contract.
+type HelloCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ReverterTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type ReverterTransactor struct {
+// HelloTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type HelloTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ReverterFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type ReverterFilterer struct {
+// HelloFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type HelloFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ReverterSession is an auto generated Go binding around an Ethereum contract,
+// HelloSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type ReverterSession struct {
-	Contract     *Reverter         // Generic contract binding to set the session for
+type HelloSession struct {
+	Contract     *Hello            // Generic contract binding to set the session for
 	CallOpts     bind.CallOpts     // Call options to use throughout this session
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// ReverterCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// HelloCallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type ReverterCallerSession struct {
-	Contract *ReverterCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts   // Call options to use throughout this session
+type HelloCallerSession struct {
+	Contract *HelloCaller  // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts // Call options to use throughout this session
 }
 
-// ReverterTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// HelloTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type ReverterTransactorSession struct {
-	Contract     *ReverterTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+type HelloTransactorSession struct {
+	Contract     *HelloTransactor  // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// ReverterRaw is an auto generated low-level Go binding around an Ethereum contract.
-type ReverterRaw struct {
-	Contract *Reverter // Generic contract binding to access the raw methods on
+// HelloRaw is an auto generated low-level Go binding around an Ethereum contract.
+type HelloRaw struct {
+	Contract *Hello // Generic contract binding to access the raw methods on
 }
 
-// ReverterCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type ReverterCallerRaw struct {
-	Contract *ReverterCaller // Generic read-only contract binding to access the raw methods on
+// HelloCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type HelloCallerRaw struct {
+	Contract *HelloCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ReverterTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type ReverterTransactorRaw struct {
-	Contract *ReverterTransactor // Generic write-only contract binding to access the raw methods on
+// HelloTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type HelloTransactorRaw struct {
+	Contract *HelloTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewReverter creates a new instance of Reverter, bound to a specific deployed contract.
-func NewReverter(address common.Address, backend bind.ContractBackend) (*Reverter, error) {
-	contract, err := bindReverter(address, backend, backend, backend)
+// NewHello creates a new instance of Hello, bound to a specific deployed contract.
+func NewHello(address common.Address, backend bind.ContractBackend) (*Hello, error) {
+	contract, err := bindHello(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &Reverter{ReverterCaller: ReverterCaller{contract: contract}, ReverterTransactor: ReverterTransactor{contract: contract}, ReverterFilterer: ReverterFilterer{contract: contract}}, nil
+	return &Hello{HelloCaller: HelloCaller{contract: contract}, HelloTransactor: HelloTransactor{contract: contract}, HelloFilterer: HelloFilterer{contract: contract}}, nil
 }
 
-// NewReverterCaller creates a new read-only instance of Reverter, bound to a specific deployed contract.
-func NewReverterCaller(address common.Address, caller bind.ContractCaller) (*ReverterCaller, error) {
-	contract, err := bindReverter(address, caller, nil, nil)
+// NewHelloCaller creates a new read-only instance of Hello, bound to a specific deployed contract.
+func NewHelloCaller(address common.Address, caller bind.ContractCaller) (*HelloCaller, error) {
+	contract, err := bindHello(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &ReverterCaller{contract: contract}, nil
+	return &HelloCaller{contract: contract}, nil
 }
 
-// NewReverterTransactor creates a new write-only instance of Reverter, bound to a specific deployed contract.
-func NewReverterTransactor(address common.Address, transactor bind.ContractTransactor) (*ReverterTransactor, error) {
-	contract, err := bindReverter(address, nil, transactor, nil)
+// NewHelloTransactor creates a new write-only instance of Hello, bound to a specific deployed contract.
+func NewHelloTransactor(address common.Address, transactor bind.ContractTransactor) (*HelloTransactor, error) {
+	contract, err := bindHello(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &ReverterTransactor{contract: contract}, nil
+	return &HelloTransactor{contract: contract}, nil
 }
 
-// NewReverterFilterer creates a new log filterer instance of Reverter, bound to a specific deployed contract.
-func NewReverterFilterer(address common.Address, filterer bind.ContractFilterer) (*ReverterFilterer, error) {
-	contract, err := bindReverter(address, nil, nil, filterer)
+// NewHelloFilterer creates a new log filterer instance of Hello, bound to a specific deployed contract.
+func NewHelloFilterer(address common.Address, filterer bind.ContractFilterer) (*HelloFilterer, error) {
+	contract, err := bindHello(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &ReverterFilterer{contract: contract}, nil
+	return &HelloFilterer{contract: contract}, nil
 }
 
-// bindReverter binds a generic wrapper to an already deployed contract.
-func bindReverter(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(ReverterABI))
+// bindHello binds a generic wrapper to an already deployed contract.
+func bindHello(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(HelloABI))
 	if err != nil {
 		return nil, err
 	}
@@ -159,57 +175,88 @@ func bindReverter(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Reverter *ReverterRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _Reverter.Contract.ReverterCaller.contract.Call(opts, result, method, params...)
+func (_Hello *HelloRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _Hello.Contract.HelloCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Reverter *ReverterRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Reverter.Contract.ReverterTransactor.contract.Transfer(opts)
+func (_Hello *HelloRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Hello.Contract.HelloTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Reverter *ReverterRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _Reverter.Contract.ReverterTransactor.contract.Transact(opts, method, params...)
+func (_Hello *HelloRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Hello.Contract.HelloTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Reverter *ReverterCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _Reverter.Contract.contract.Call(opts, result, method, params...)
+func (_Hello *HelloCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _Hello.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Reverter *ReverterTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Reverter.Contract.contract.Transfer(opts)
+func (_Hello *HelloTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Hello.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Reverter *ReverterTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _Reverter.Contract.contract.Transact(opts, method, params...)
+func (_Hello *HelloTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Hello.Contract.contract.Transact(opts, method, params...)
 }
 
-// Revert is a paid mutator transaction binding the contract method 0x7da3c3ab.
+// GetMsg is a free data retrieval call binding the contract method 0xb5fdeb23.
 //
-// Solidity: function revert() returns()
-func (_Reverter *ReverterTransactor) Revert(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Reverter.contract.Transact(opts, "revert")
+// Solidity: function getMsg() view returns(string)
+func (_Hello *HelloCaller) GetMsg(opts *bind.CallOpts) (string, error) {
+	var out []interface{}
+	err := _Hello.contract.Call(opts, &out, "getMsg")
+
+	if err != nil {
+		return *new(string), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(string)).(*string)
+
+	return out0, err
+
 }
 
-// Revert is a paid mutator transaction binding the contract method 0x7da3c3ab.
+// GetMsg is a free data retrieval call binding the contract method 0xb5fdeb23.
 //
-// Solidity: function revert() returns()
-func (_Reverter *ReverterSession) Revert() (*types.Transaction, error) {
-	return _Reverter.Contract.Revert(&_Reverter.TransactOpts)
+// Solidity: function getMsg() view returns(string)
+func (_Hello *HelloSession) GetMsg() (string, error) {
+	return _Hello.Contract.GetMsg(&_Hello.CallOpts)
 }
 
-// Revert is a paid mutator transaction binding the contract method 0x7da3c3ab.
+// GetMsg is a free data retrieval call binding the contract method 0xb5fdeb23.
 //
-// Solidity: function revert() returns()
-func (_Reverter *ReverterTransactorSession) Revert() (*types.Transaction, error) {
-	return _Reverter.Contract.Revert(&_Reverter.TransactOpts)
+// Solidity: function getMsg() view returns(string)
+func (_Hello *HelloCallerSession) GetMsg() (string, error) {
+	return _Hello.Contract.GetMsg(&_Hello.CallOpts)
+}
+
+// SetMsg is a paid mutator transaction binding the contract method 0xc4784fd4.
+//
+// Solidity: function setMsg(string _msg) returns()
+func (_Hello *HelloTransactor) SetMsg(opts *bind.TransactOpts, _msg string) (*types.Transaction, error) {
+	return _Hello.contract.Transact(opts, "setMsg", _msg)
+}
+
+// SetMsg is a paid mutator transaction binding the contract method 0xc4784fd4.
+//
+// Solidity: function setMsg(string _msg) returns()
+func (_Hello *HelloSession) SetMsg(_msg string) (*types.Transaction, error) {
+	return _Hello.Contract.SetMsg(&_Hello.TransactOpts, _msg)
+}
+
+// SetMsg is a paid mutator transaction binding the contract method 0xc4784fd4.
+//
+// Solidity: function setMsg(string _msg) returns()
+func (_Hello *HelloTransactorSession) SetMsg(_msg string) (*types.Transaction, error) {
+	return _Hello.Contract.SetMsg(&_Hello.TransactOpts, _msg)
 }

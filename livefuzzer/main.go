@@ -18,8 +18,9 @@ var (
 )
 
 func main() {
-	backend, key := getRealBackend()
-	SendBaikalTransactions(backend, key, 100)
+	// backend, key := getRealBackend()
+	// SendBaikalTransactions(backend, key, 100)
+	BigBaikalTest(100)
 }
 
 func sendTx(sk *ecdsa.PrivateKey, backend *ethclient.Client, to common.Address, value *big.Int) {
