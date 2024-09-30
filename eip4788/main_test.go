@@ -97,6 +97,11 @@ func TestFuzzGet(t *testing.T) {
 	FuzzGet([]byte(string("00000000000000000000")))
 }
 
+func TestGetCrash(t *testing.T) {
+	input := []byte("\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00")
+	FuzzGet(input)
+}
+
 func FuzzFuzzSet(f *testing.F) {
 	f.Fuzz(func(t *testing.T, input []byte, timestamp uint64) {
 		FuzzSet(input, timestamp)

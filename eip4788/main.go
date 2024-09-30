@@ -105,7 +105,7 @@ func FuzzSetGet(input []byte) int {
 }
 
 func origByteCode() []byte {
-	return common.FromHex("3373fffffffffffffffffffffffffffffffffffffffe14604457602036146024575f5ffd5b620180005f350680545f35146037575f5ffd5b6201800001545f5260205ff35b6201800042064281555f359062018000015500")
+	return common.FromHex("3373fffffffffffffffffffffffffffffffffffffffe14604d57602036146024575f5ffd5b5f35801560495762001fff810690815414603c575f5ffd5b62001fff01545f5260205ff35b5f5ffd5b62001fff42064281555f359062001fff015500")
 }
 
 var precompileAddress = "0xfffffffffffffffffffffffffffffffffffffffe"
@@ -113,9 +113,9 @@ var precompileAddress = "0xfffffffffffffffffffffffffffffffffffffffe"
 func testCode(caller common.Address, calldata []byte, timestamp uint64, state *state.StateDB) ([]byte, error) {
 	addr := common.HexToAddress(precompileAddress)
 	if caller == common.Address(common.FromHex("0xfffffffffffffffffffffffffffffffffffffffe")) {
-		timeKey := Uint64ToHash(timestamp % 0x018000)
+		timeKey := Uint64ToHash(timestamp % 8191)
 		state.SetState(addr, timeKey, Uint64ToHash(timestamp)) // sstore(timeKey, timestamp)
-		rootKey := Uint64ToHash(timestamp%0x018000 + 0x018000)
+		rootKey := Uint64ToHash(timestamp%8191 + 8191)
 		state.SetState(addr, rootKey, common.BytesToHash(calldata)) // sstore(rootKey, calldata)
 		fmt.Printf("Writing %v to %v\n", timeKey, Uint64ToHash(timestamp))
 		fmt.Printf("Writing %v to %v\n", rootKey, common.BytesToHash(calldata))
@@ -125,13 +125,13 @@ func testCode(caller common.Address, calldata []byte, timestamp uint64, state *s
 		return nil, errors.New("len(calldata) != 0x20") // revert(0,0)
 	}
 	cd := new(uint256.Int).SetBytes(calldata)
-	t := new(uint256.Int).Mod(cd, uint256.NewInt(0x018000))
+	t := new(uint256.Int).Mod(cd, uint256.NewInt(8191))
 	loaded := state.GetState(addr, t.Bytes32()) // sload(t)
-	if !bytes.Equal(loaded[:], calldata) {
+	if !bytes.Equal(loaded[:], calldata) || bytes.Equal(loaded[:], common.Hash{}.Bytes()) {
 		fmt.Printf("loaded: %v \ncalldata: %v \nt.Bytes: %v\n", loaded, calldata, t.Bytes())
 		return nil, errors.New("loaded != calldata") // revert(0,0)
 	}
-	t2 := new(uint256.Int).Add(t, uint256.NewInt(0x018000))
+	t2 := new(uint256.Int).Add(t, uint256.NewInt(8191))
 	loaded2 := state.GetState(addr, t2.Bytes32()) // sload(t2)
 	fmt.Printf("Loaded %v from %v\n", loaded, t.Hex())
 	fmt.Printf("Loaded %v from %v\n", loaded2, t2.Hex())
@@ -144,7 +144,7 @@ func newByteCode() []byte {
 	prog.Op(ops.CALLER)
 	prog.Push(common.FromHex("0xfffffffffffffffffffffffffffffffffffffffe"))
 	prog.Op(ops.EQ)
-	prog.Push(0x44)
+	prog.Push(0x4d)
 	prog.Op(ops.JUMPI)
 
 	prog.Push(0x20)
@@ -158,16 +158,22 @@ func newByteCode() []byte {
 	prog.Op(ops.REVERT)
 
 	prog.Op(ops.JUMPDEST)
-	prog.Push(0x018000)
 	prog.Push0()
 	prog.Op(ops.CALLDATALOAD)
-	prog.Op(ops.MOD)
 	prog.Op(ops.DUP1)
+	prog.Op(ops.ISZERO)
+	prog.Push(0x49)
+	prog.Op(ops.JUMPI)
+
+	prog.Op(ops.PUSH3)
+	prog.AddAll([]byte{0x00, 0x1f, 0xff})
+	prog.Op(ops.DUP2)
+	prog.Op(ops.MOD)
+	prog.Op(ops.SWAP1)
+	prog.Op(ops.DUP2)
 	prog.Op(ops.SLOAD)
-	prog.Push0()
-	prog.Op(ops.CALLDATALOAD)
 	prog.Op(ops.EQ)
-	prog.Push(0x37)
+	prog.Push(0x3c)
 	prog.Op(ops.JUMPI)
 
 	prog.Push0()
@@ -175,7 +181,8 @@ func newByteCode() []byte {
 	prog.Op(ops.REVERT)
 
 	prog.Op(ops.JUMPDEST)
-	prog.Push(0x018000)
+	prog.Op(ops.PUSH3)
+	prog.AddAll([]byte{0x00, 0x1f, 0xff})
 	prog.Op(ops.ADD)
 	prog.Op(ops.SLOAD)
 	prog.Push0()
@@ -185,7 +192,13 @@ func newByteCode() []byte {
 	prog.Op(ops.RETURN)
 
 	prog.Op(ops.JUMPDEST)
-	prog.Push(0x018000)
+	prog.Push0()
+	prog.Push0()
+	prog.Op(ops.REVERT)
+
+	prog.Op(ops.JUMPDEST)
+	prog.Op(ops.PUSH3)
+	prog.AddAll([]byte{0x00, 0x1f, 0xff})
 	prog.Op(ops.TIMESTAMP)
 	prog.Op(ops.MOD)
 	prog.Op(ops.TIMESTAMP)
@@ -194,7 +207,9 @@ func newByteCode() []byte {
 	prog.Push0()
 	prog.Op(ops.CALLDATALOAD)
 	prog.Op(ops.SWAP1)
-	prog.Push(0x018000)
+	prog.Op(ops.PUSH3)
+	prog.AddAll([]byte{0x00, 0x1f, 0xff})
+	//prog.Push(0x001fff)
 	prog.Op(ops.ADD)
 	prog.Op(ops.SSTORE)
 	prog.Op(ops.STOP)
