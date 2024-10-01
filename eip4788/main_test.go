@@ -33,13 +33,13 @@ func TestGoCode(t *testing.T) {
 	timestamp := uint64(0x1234)
 	statedb, _ := state.New(types.EmptyRootHash, state.NewDatabase(rawdb.NewDatabase(memorydb.New())), nil)
 	// Store
-	_, err := testCode(store, calldata[:], timestamp, statedb)
+	_, err := testCode4788(store, calldata[:], timestamp, statedb)
 	if err != nil {
 		t.Fatal(err)
 	}
 	// Retrieve
 	retr := Uint64ToHash(timestamp)
-	out2, err2 := testCode(caller, retr[:], 0, statedb)
+	out2, err2 := testCode4788(caller, retr[:], 0, statedb)
 	if err2 != nil {
 		t.Fatal(err2)
 	}

@@ -35,7 +35,7 @@ func FuzzSet(origInput []byte, timestamp uint64) int {
 	statedb.SetCode(addr, origByteCode())
 	statedb2 := statedb.Copy()
 	// Store
-	out, err := testCode(store, input, timestamp, statedb)
+	out, err := testCode4788(store, input, timestamp, statedb)
 	if err != nil {
 		panic(err)
 	}
@@ -72,7 +72,7 @@ func FuzzGet(input []byte) int {
 	statedb.CreateAccount(caller)
 	statedb2 := statedb.Copy()
 	// Store
-	out, err1 := testCode(caller, input, 0, statedb)
+	out, err1 := testCode4788(caller, input, 0, statedb)
 
 	logger := logger.NewMarkdownLogger(nil, os.Stdout)
 	config := vm.Config{Tracer: logger}
@@ -110,7 +110,7 @@ func origByteCode() []byte {
 
 var precompileAddress = "0xfffffffffffffffffffffffffffffffffffffffe"
 
-func testCode(caller common.Address, calldata []byte, timestamp uint64, state *state.StateDB) ([]byte, error) {
+func testCode4788(caller common.Address, calldata []byte, timestamp uint64, state *state.StateDB) ([]byte, error) {
 	addr := common.HexToAddress(precompileAddress)
 	if caller == common.Address(common.FromHex("0xfffffffffffffffffffffffffffffffffffffffe")) {
 		timeKey := Uint64ToHash(timestamp % 8191)
