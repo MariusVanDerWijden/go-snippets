@@ -1,6 +1,6 @@
 module github.com/MariusVanDerWijden/go-snippets/eip4788
 
-go 1.20
+go 1.21
 
 require (
 	github.com/ethereum/go-ethereum v1.12.2
